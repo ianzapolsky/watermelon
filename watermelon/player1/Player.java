@@ -52,20 +52,44 @@ public class Player extends watermelon.sim.Player {
     s = initS;
     double maxScore = Double.MIN_VALUE;
 
-    for (int i = 0; i < 20; i++) {
-      ArrayList<seed> tmplist = getRandomBoard();
-      double tmpScore = calculateScore(tmplist);
-      if (tmpScore > maxScore) {
-        maxScore = tmpScore;
-        seedlist = tmplist;
-        System.out.printf("new max score is %f\n", maxScore);
-      }
-    }
+    seedlist = getAlternatingBoard();
 
 		System.out.printf("seedlist size is %d\n", seedlist.size());
     System.out.printf("score is %f\n", calculateScore(seedlist));
 		return seedlist;
 	}
+
+  private ArrayList<seed> getAlternatingBoard() {
+    int seedType = 1;
+    ArrayList<seed> tmplist = new ArrayList<seed>();
+		for (double i = distowall; i < width - distowall; i = i + distoseed) {
+      seedType = seedType * -1;
+			for (double j = distowall; j < length - distowall; j = j + distoseed) {
+				seed tmp;
+
+
+        if (seedType == 1) {
+          tmp = new seed(i, j, false);
+          seedType *= -1;
+        } else {
+          tmp = new seed(i, j, true);
+          seedType *= -1;
+        }
+
+				boolean add = true;
+				for (int f = 0; f < treelist.size(); f++) {
+					if (distance(tmp, treelist.get(f)) < distotree) {
+						add = false;
+						break;
+					}
+				}
+				if (add) {
+					tmplist.add(tmp);
+				}
+      }
+    }
+    return tmplist;
+  }
 
   private ArrayList<seed> getRandomBoard() {
     ArrayList<seed> tmplist = new ArrayList<seed>();
