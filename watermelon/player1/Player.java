@@ -7,9 +7,9 @@ import watermelon.sim.Point;
 import watermelon.sim.seed;
 
 public class Player extends watermelon.sim.Player {
-	static double distowall = 2.00;
+	static double distowall = 1.00;
 	static double distotree = 2.00;
-	static double distoseed = 1.00;
+	static double distoseed = 2.00;
 
   double width;
   double length;
