@@ -7,6 +7,7 @@ public class seed {
     public double x;
     public double y;
     public boolean tetraploid;
+    public double score;
     
     public seed() { x = 0.0; y = 0.0; tetraploid = false; }
 
@@ -14,5 +15,6 @@ public class seed {
         x = xx;
         y = yy;
         tetraploid = tetra;
+       
     }
 }

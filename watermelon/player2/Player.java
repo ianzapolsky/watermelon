@@ -2,9 +2,11 @@ package watermelon.player2;
 
 import java.util.*;
 
+
 import watermelon.sim.Pair;
 import watermelon.sim.Point;
 import watermelon.sim.seed;
+import watermelon.player2.SeedGraph;
 
 public class Player extends watermelon.sim.Player {
 
@@ -60,26 +62,21 @@ public class Player extends watermelon.sim.Player {
     width    = initWidth;
     length   = initLength;
     s        = initS;
-    double maxScore = Double.MIN_VALUE;
 
     seedlist = getHexagonalAlternatingBoard();
+    recolorLowProducingSeeds(seedlist);
 
-    ArrayList<seed> hexList = getHexagonalBoard();
-    ArrayList<seed> hexAltList = getHexagonalAlternatingBoard();
-    double hexScore = calculateScore(hexList);
-    double hexAltScore = calculateScore(hexAltList);
-    if (hexAltScore > hexScore) {
-      System.out.println("hexagonal alternating is the best");
-      seedlist = hexAltList;
-    } else {
-      System.out.println("hexagonal is the best");
-      seedlist = hexList;
-    }
-    
 		System.out.printf("seedlist size is %d\n", seedlist.size());
     System.out.printf("score is %f\n", calculateScore(seedlist));
 		return seedlist;
 	}
+
+  private void recolorLowProducingSeeds(ArrayList<seed> seedlist) {
+    SeedGraph seedgraph = new SeedGraph(seedlist);
+    for (int i = 0; i < seedlist.size(); i++)
+      if (seedgraph.isLowProducer(i))
+        seedlist.get(i).tetraploid = !seedlist.get(i).tetraploid;
+  }
 
   private ArrayList<seed> getHexagonalAlternatingBoard() {
     ArrayList<seed> tmplist = new ArrayList<seed>();
@@ -176,6 +173,12 @@ public class Player extends watermelon.sim.Player {
   private boolean validateSeed(seed tmpSeed) {
     for (Pair p : treelist) {
       if (distance(tmpSeed, p) < distotree) {
+        return false;
+      } 
+      if (tmpSeed.x + 1.00 > width || tmpSeed.x - 1.00 < 0) {
+        return false;
+      }
+      if (tmpSeed.y + 1.00 > length || tmpSeed.y - 1.00 < 0) {
         return false;
       }
     }
