@@ -63,8 +63,13 @@ public class Player extends watermelon.sim.Player {
     length   = initLength;
     s        = initS;
 
-    seedlist = getHexagonalAlternatingBoard();
-    recolorLowProducingSeeds(seedlist);
+    ArrayList<seed> hexAlternating = getHexagonalAlternatingBoard();
+    ArrayList<seed> gridAlternating = getAlternatingBoard();
+
+    if (calculateScore(hexAlternating) > calculateScore(gridAlternating))
+      seedlist = hexAlternating;
+    else
+      seedlist = gridAlternating;
 
 		System.out.printf("seedlist size is %d\n", seedlist.size());
     System.out.printf("score is %f\n", calculateScore(seedlist));
@@ -102,42 +107,22 @@ public class Player extends watermelon.sim.Player {
       seedType = 1;
       shift = !shift;
     }
+    recolorLowProducingSeeds(tmplist);
     return tmplist;
   }
 
-  private ArrayList<seed> getHexagonalBoard() {
-    int seedType = 1;
-    ArrayList<seed> tmplist = new ArrayList<seed>();
-    boolean shift = false;
-    for (double j = distowall; j < length - distowall; j = j + getHexagonalOffsetY() + epsilon) {
-			for (double i = distowall; i < width - distowall; i = i + distoseed) {
-        seed tmp = new seed(i, j, false);
-        if (shift) {
-          tmp.x += getHexagonalOffsetX();
-        }
-        if (seedType == 1) {
-          tmp.tetraploid = true;
-        }
-        seedType *= -1;
-        if (validateSeed(tmp))
-					tmplist.add(tmp);
-      }
-      seedType = 1;
-      shift = !shift;
-    }
-    return tmplist;
-  }
-  
   private ArrayList<seed> getAlternatingBoard() {
-    int seedType = 1;
     ArrayList<seed> tmplist = new ArrayList<seed>();
-		for (double i = distowall; i < width - distowall; i = i + distoseed) {
+    int seedType = 1;
+    boolean alternateRow = true;
+		for (double i = distowall; i <= length - distowall; i = i + distoseed) {
 
       // alternate initial seed type per row
-      if (i % 2 == 0)
+      if (alternateRow)
         seedType = seedType * -1;
+      alternateRow = !alternateRow;
 
-			for (double j = distowall; j < length - distowall; j = j + distoseed) {
+			for (double j = distowall; j <= width - distowall; j = j + distoseed) {
 				seed tmp;
         // alternate seed type
         if (seedType == 1) {
@@ -150,6 +135,7 @@ public class Player extends watermelon.sim.Player {
         if (validateSeed(tmp))
 					tmplist.add(tmp);
       }
+      seedType = 1;
     }
     return tmplist;
   }
