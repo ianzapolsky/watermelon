@@ -13,7 +13,7 @@ public class Player extends watermelon.sim.Player {
 	static double distowall = 1.00;
 	static double distotree = 2.00;
 	static double distoseed = 2.00;
-  static double epsilon   = .000001;
+  static double epsilon   = .0000001;
 
   double width;
   double length;
@@ -83,11 +83,11 @@ public class Player extends watermelon.sim.Player {
     int seedType = 1;
     boolean shift = false;
     boolean alternateRow = true;
-    for (double j = distowall; j < length - distowall; j = j + getHexagonalOffsetY() + epsilon) {
+    for (double j = distowall; j <= length - distowall; j = j + getHexagonalOffsetY() + epsilon) {
       if (!alternateRow)
         seedType *= -1;
       alternateRow = !alternateRow;
-			for (double i = distowall; i < width - distowall; i = i + distoseed) {
+			for (double i = distowall; i <= width - distowall; i = i + distoseed) {
         seed tmp = new seed(i, j, false);
         if (shift) {
           tmp.x += getHexagonalOffsetX();
