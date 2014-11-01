@@ -148,15 +148,16 @@ public class Player extends watermelon.sim.Player {
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean alternateRow = true;
-		for (double i = distowall; i <= length - distowall; i = i + distoseed) {
+		for (double i = distowall; i <= width - distowall; i = i + distoseed) {
 
 			// alternate initial seed type per row
 			if (alternateRow)
 				seedType = seedType * -1;
 			alternateRow = !alternateRow;
-
-			for (double j = distowall; j <= width - distowall; j = j
+			System.out.println("i = " + i);
+			for (double j = distowall; j <= length - distowall; j = j
 					+ distoseed) {
+				System.out.println("j = " + j);
 				seed tmp;
 				// alternate seed type
 				if (seedType == 1) {
