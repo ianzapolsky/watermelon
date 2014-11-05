@@ -1,4 +1,4 @@
-package watermelon.player3;
+package watermelon.player4;
 
 import java.util.ArrayList;
 
@@ -21,8 +21,7 @@ public class SeedGraph {
 
 	// distance between seed and pair
 	static double distance(seed tmp, Pair pair) {
-		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y)
-				* (tmp.y - pair.y));
+		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y) * (tmp.y - pair.y));
 	}
 
 	// distance between seed and point
@@ -140,8 +139,7 @@ public class SeedGraph {
 		ArrayList<seed> adjacentAdjacentSeeds = getAdjacentSeeds(seedIndex);
 
 		for (int i = 0; i < adjacentSeedsIndex.size(); i++) {
-			ArrayList<seed> aASeeds = getAdjacentSeeds(adjacentSeedsIndex
-					.get(i));
+			ArrayList<seed> aASeeds = getAdjacentSeeds(adjacentSeedsIndex.get(i));
 
 			for (int j = 0; j < aASeeds.size(); j++) {
 				if (!adjacentAdjacentSeeds.contains(aASeeds.get(j)))
@@ -151,8 +149,7 @@ public class SeedGraph {
 
 		}
 
-		System.out.println("adjacentSeedsIndex.size() = "
-				+ adjacentSeedsIndex.size() + ", adjacentAdjacentSeeds = "
+		System.out.println("adjacentSeedsIndex.size() = " + adjacentSeedsIndex.size() + ", adjacentAdjacentSeeds = "
 				+ adjacentAdjacentSeeds.size());
 		/*
 		 * // including the first layer of adjacent seeds in the arrayList

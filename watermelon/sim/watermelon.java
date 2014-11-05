@@ -87,12 +87,10 @@ public class watermelon {
 	static Player loadPlayer(String group) {
 		try {
 			// get tools
-			URL url = watermelon.class.getProtectionDomain().getCodeSource()
-					.getLocation();
+			URL url = watermelon.class.getProtectionDomain().getCodeSource().getLocation();
 			// use the customized reloader, ensure clearing all static
 			// information
-			ClassLoader loader = new ClassReloader(url,
-					watermelon.class.getClassLoader());
+			ClassLoader loader = new ClassReloader(url, watermelon.class.getClassLoader());
 			if (loader == null)
 				throw new Exception("Cannot load class loader");
 			JavaCompiler compiler = null;
@@ -101,15 +99,12 @@ public class watermelon {
 			String sep = File.separator;
 			// load players
 			// search for compiled files
-			File classFile = new File(ROOT_DIR + sep + group + sep
-					+ "Player.class");
+			File classFile = new File(ROOT_DIR + sep + group + sep + "Player.class");
 			System.err.println(classFile.getAbsolutePath());
 			if (!classFile.exists() || recompile) {
 				// delete all class files
-				List<File> classFiles = directoryFiles(ROOT_DIR + sep + group,
-						".class");
-				System.err.print("Deleting " + classFiles.size()
-						+ " class files...   ");
+				List<File> classFiles = directoryFiles(ROOT_DIR + sep + group, ".class");
+				System.err.print("Deleting " + classFiles.size() + " class files...   ");
 				for (File file : classFiles)
 					file.delete();
 				System.err.println("OK");
@@ -118,27 +113,21 @@ public class watermelon {
 				if (compiler == null)
 					throw new Exception("Cannot load compiler");
 				if (fileManager == null)
-					fileManager = compiler.getStandardFileManager(null, null,
-							null);
+					fileManager = compiler.getStandardFileManager(null, null, null);
 				if (fileManager == null)
 					throw new Exception("Cannot load file manager");
 				// compile all files
-				List<File> javaFiles = directoryFiles(ROOT_DIR + sep + group,
-						".java");
-				System.err.print("Compiling " + javaFiles.size()
-						+ " source files...   ");
-				Iterable<? extends JavaFileObject> units = fileManager
-						.getJavaFileObjectsFromFiles(javaFiles);
-				boolean ok = compiler.getTask(null, fileManager, null, null,
-						null, units).call();
+				List<File> javaFiles = directoryFiles(ROOT_DIR + sep + group, ".java");
+				System.err.print("Compiling " + javaFiles.size() + " source files...   ");
+				Iterable<? extends JavaFileObject> units = fileManager.getJavaFileObjectsFromFiles(javaFiles);
+				boolean ok = compiler.getTask(null, fileManager, null, null, null, units).call();
 				if (!ok)
 					throw new Exception("Compile error");
 				System.err.println("OK");
 			}
 			// load class
 			System.err.print("Loading player class...   ");
-			Class playerClass = loader.loadClass(ROOT_DIR + "." + group
-					+ ".Player");
+			Class playerClass = loader.loadClass(ROOT_DIR + "." + group + ".Player");
 			System.err.println("OK");
 
 			Player player = (Player) playerClass.newInstance();
@@ -156,8 +145,7 @@ public class watermelon {
 
 	// compute Euclidean distance between two points
 	static double distance(seed a, Pair pair) {
-		return Math.sqrt((a.x - pair.x) * (a.x - pair.x) + (a.y - pair.y)
-				* (a.y - pair.y));
+		return Math.sqrt((a.x - pair.x) * (a.x - pair.x) + (a.y - pair.y) * (a.y - pair.y));
 	}
 
 	static double distanceseed(seed a, seed b) {
@@ -271,8 +259,7 @@ public class watermelon {
 			g2.setStroke(stroke);
 			double size = Math.max(W, L);
 			// draw 2D rectangle
-			g2.draw(new Rectangle2D.Double(ox, oy, dimension * s / size * W,
-					dimension * s / size * L));
+			g2.draw(new Rectangle2D.Double(ox, oy, dimension * s / size * W, dimension * s / size * L));
 
 			double x_in = (dimension * s) / size;
 			double y_in = (dimension * s) / size;
@@ -296,8 +283,7 @@ public class watermelon {
 			double size = Math.max(W, L);
 			double x_in = (dimension * s) / size;
 			double y_in = (dimension * s) / size;
-			Ellipse2D e = new Ellipse2D.Double(ox + pr.x * x_in - x_in, oy
-					+ pr.y * y_in - y_in, 2 * x_in, 2 * y_in);
+			Ellipse2D e = new Ellipse2D.Double(ox + pr.x * x_in - x_in, oy + pr.y * y_in - y_in, 2 * x_in, 2 * y_in);
 			g2.setStroke(stroke);
 			g2.draw(e);
 			g2.fill(e);
@@ -309,14 +295,12 @@ public class watermelon {
 
 			if (sd.tetraploid == true) {
 				if (enhancedColors)
-					g2.setPaint(new Color(Color.HSBtoRGB((float) 0.6,
-							(float) saturation, (float) 1.0)));
+					g2.setPaint(new Color(Color.HSBtoRGB((float) 0.6, (float) saturation, (float) 1.0)));
 				else
 					g2.setPaint(Color.BLACK);
 			} else {
 				if (enhancedColors)
-					g2.setPaint(new Color(Color.HSBtoRGB((float) 0.0,
-							(float) saturation, (float) 1.0)));
+					g2.setPaint(new Color(Color.HSBtoRGB((float) 0.0, (float) saturation, (float) 1.0)));
 				else
 					g2.setPaint(Color.MAGENTA);
 			}
@@ -325,8 +309,7 @@ public class watermelon {
 			double x_in = (dimension * s) / size;
 			double y_in = (dimension * s) / size;
 
-			Ellipse2D e = new Ellipse2D.Double(ox + sd.x * x_in - x_in, oy
-					+ sd.y * y_in - y_in, 2 * x_in, 2 * y_in);
+			Ellipse2D e = new Ellipse2D.Double(ox + sd.x * x_in - x_in, oy + sd.y * y_in - y_in, 2 * x_in, 2 * y_in);
 			g2.setStroke(stroke);
 			g2.draw(e);
 			g2.fill(e);
@@ -363,20 +346,14 @@ public class watermelon {
 			double difdis = 0.0;
 			for (int j = 0; j < seedlist.size(); j++) {
 				if (j != i) {
-					totaldis = totaldis
-							+ Math.pow(
-									distanceseed(seedlist.get(i),
-											seedlist.get(j)), -2);
+					totaldis = totaldis + Math.pow(distanceseed(seedlist.get(i), seedlist.get(j)), -2);
 				}
 			}
 			for (int j = 0; j < seedlist.size(); j++) {
 				if (j != i
-						&& ((seedlist.get(i).tetraploid && !seedlist.get(j).tetraploid) || (!seedlist
-								.get(i).tetraploid && seedlist.get(j).tetraploid))) {
-					difdis = difdis
-							+ Math.pow(
-									distanceseed(seedlist.get(i),
-											seedlist.get(j)), -2);
+						&& ((seedlist.get(i).tetraploid && !seedlist.get(j).tetraploid) || (!seedlist.get(i).tetraploid && seedlist
+								.get(j).tetraploid))) {
+					difdis = difdis + Math.pow(distanceseed(seedlist.get(i), seedlist.get(j)), -2);
 				}
 			}
 			// System.out.println(totaldis);
@@ -395,43 +372,32 @@ public class watermelon {
 		for (int i = 0; i < nseeds; i++) {
 			for (int j = i + 1; j < nseeds; j++) {
 				if (distanceseed(seedlistin.get(i), seedlistin.get(j)) < distoseed) {
-					System.out.printf(
-							"The distance between %d seed  %d seed is %f\n", i,
-							j,
+					System.out.printf("The distance between %d seed  %d seed is %f\n", i, j,
 							distanceseed(seedlistin.get(i), seedlistin.get(j)));
 					return false;
 				}
 			}
 		}
 		for (int i = 0; i < nseeds; i++) {
-			if (seedlistin.get(i).x < 0 || seedlistin.get(i).x > W
-					|| seedlistin.get(i).y < 0 || seedlistin.get(i).y > L) {
-				System.out.printf(
-						"The %d seed (%f, %f)  is out of the field\n", i,
-						seedlistin.get(i).x, seedlistin.get(i).y);
+			if (seedlistin.get(i).x < 0 || seedlistin.get(i).x > W || seedlistin.get(i).y < 0
+					|| seedlistin.get(i).y > L) {
+				System.out.printf("The %d seed (%f, %f)  is out of the field\n", i, seedlistin.get(i).x,
+						seedlistin.get(i).y);
 				return false;
 			}
-			if (seedlistin.get(i).x < distowall
-					|| W - seedlistin.get(i).x < distowall
-					|| seedlistin.get(i).y < distowall
-					|| L - seedlistin.get(i).y < distowall) {
-				System.out.printf(
-						"The %d seed (%f, %f) is too close to the wall\n", i,
-						seedlistin.get(i).x, seedlistin.get(i).y);
+			if (seedlistin.get(i).x < distowall || W - seedlistin.get(i).x < distowall
+					|| seedlistin.get(i).y < distowall || L - seedlistin.get(i).y < distowall) {
+				System.out.printf("The %d seed (%f, %f) is too close to the wall\n", i, seedlistin.get(i).x,
+						seedlistin.get(i).y);
 				return false;
 			}
 		}
 		for (int i = 0; i < treelist.size(); i++) {
 			for (int j = 0; j < nseeds; j++) {
 				if (distance(seedlistin.get(j), treelist.get(i)) < distotree) {
-					System.out
-							.printf("The %d seed (%f, %f) is too close to the tree (%f, %f), %f\n",
-									j,
-									seedlistin.get(j).x,
-									seedlistin.get(j).y,
-									treelist.get(i).x,
-									treelist.get(i).y,
-									distance(seedlistin.get(j), treelist.get(i)));
+					System.out.printf("The %d seed (%f, %f) is too close to the tree (%f, %f), %f\n", j,
+							seedlistin.get(j).x, seedlistin.get(j).y, treelist.get(i).x, treelist.get(i).y,
+							distance(seedlistin.get(j), treelist.get(i)));
 					return false;
 				}
 			}

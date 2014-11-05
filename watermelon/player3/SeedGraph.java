@@ -21,8 +21,7 @@ public class SeedGraph {
 
 	// distance between seed and pair
 	static double distance(seed tmp, Pair pair) {
-		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y)
-				* (tmp.y - pair.y));
+		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y) * (tmp.y - pair.y));
 	}
 
 	// distance between seed and point
@@ -46,6 +45,33 @@ public class SeedGraph {
 		if (getAdjacentSame(seedIndex) > getAdjacentDifferent(seedIndex))
 			return true;
 		return false;
+	}
+
+	// returns the score
+	private double calculateScore(ArrayList<seed> seedlist) {
+		double total = 0.0;
+		for (int i = 0; i < seedlist.size(); i++) {
+			double score = 0.0;
+			double chance = 0.0;
+			double totaldis = 0.0;
+			double difdis = 0.0;
+			for (int j = 0; j < seedlist.size(); j++) {
+				if (j != i) {
+					totaldis = totaldis + Math.pow(distance(seedlist.get(i), seedlist.get(j)), -2);
+				}
+			}
+			for (int j = 0; j < seedlist.size(); j++) {
+				if (j != i
+						&& ((seedlist.get(i).tetraploid && !seedlist.get(j).tetraploid) || (!seedlist.get(i).tetraploid && seedlist
+								.get(j).tetraploid))) {
+					difdis = difdis + Math.pow(distance(seedlist.get(i), seedlist.get(j)), -2);
+				}
+			}
+			chance = difdis / totaldis;
+			score = chance + (1 - chance) * Player.s;
+			total = total + score;
+		}
+		return total;
 	}
 
 	// return the number of plants that are adjacent to plant at seedIndex that
@@ -140,8 +166,7 @@ public class SeedGraph {
 		ArrayList<seed> adjacentAdjacentSeeds = getAdjacentSeeds(seedIndex);
 
 		for (int i = 0; i < adjacentSeedsIndex.size(); i++) {
-			ArrayList<seed> aASeeds = getAdjacentSeeds(adjacentSeedsIndex
-					.get(i));
+			ArrayList<seed> aASeeds = getAdjacentSeeds(adjacentSeedsIndex.get(i));
 
 			for (int j = 0; j < aASeeds.size(); j++) {
 				if (!adjacentAdjacentSeeds.contains(aASeeds.get(j)))
@@ -151,8 +176,7 @@ public class SeedGraph {
 
 		}
 
-		System.out.println("adjacentSeedsIndex.size() = "
-				+ adjacentSeedsIndex.size() + ", adjacentAdjacentSeeds = "
+		System.out.println("adjacentSeedsIndex.size() = " + adjacentSeedsIndex.size() + ", adjacentAdjacentSeeds = "
 				+ adjacentAdjacentSeeds.size());
 		/*
 		 * // including the first layer of adjacent seeds in the arrayList

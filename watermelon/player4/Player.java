@@ -1,10 +1,4 @@
-package watermelon.group3_w3;
-import java.util.*;
-import watermelon.sim.Pair;
-import watermelon.sim.Point;
-import watermelon.sim.seed;
-import watermelon.group3_w2.SeedGraph;
-
+package watermelon.player4;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -38,8 +32,7 @@ public class Player extends watermelon.sim.Player {
 
 	// distance between seed and pair
 	static double distance(seed tmp, Pair pair) {
-		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y)
-				* (tmp.y - pair.y));
+		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y) * (tmp.y - pair.y));
 	}
 
 	// distance between seed and point
@@ -63,8 +56,7 @@ public class Player extends watermelon.sim.Player {
 	}
 
 	@Override
-	public ArrayList<seed> move(ArrayList<Pair> initTreelist, double initWidth,
-			double initLength, double initS) {
+	public ArrayList<seed> move(ArrayList<Pair> initTreelist, double initWidth, double initLength, double initS) {
 		treelist = initTreelist;
 		width = initWidth;
 		length = initLength;
@@ -79,197 +71,169 @@ public class Player extends watermelon.sim.Player {
 		ArrayList<seed> gridAlternatingSW = getSWAlternatingBoard();
 		ArrayList<seed> gridAlternatingSE = getSEAlternatingBoard();
 
-		
 		if (calculateScore(hexAlternatingNW) > calculateScore(gridAlternatingNW))
 			seedlist = hexAlternatingNW;
 		else
-			seedlist = gridAlternatingNW; 
-		
+			seedlist = gridAlternatingNW;
+
 		if (calculateScore(hexAlternatingNE) > calculateScore(seedlist))
 			seedlist = hexAlternatingNE;
-		
+
 		if (calculateScore(hexAlternatingSW) > calculateScore(seedlist))
 			seedlist = hexAlternatingSW;
-			
+
 		if (calculateScore(hexAlternatingSE) > calculateScore(seedlist))
 			seedlist = hexAlternatingSE;
-			
+
 		if (calculateScore(gridAlternatingNE) > calculateScore(seedlist))
 			seedlist = gridAlternatingNE;
-			
+
 		if (calculateScore(gridAlternatingSW) > calculateScore(seedlist))
 			seedlist = gridAlternatingSW;
-			
+
 		if (calculateScore(gridAlternatingSE) > calculateScore(seedlist))
 			seedlist = gridAlternatingSE;
-	
 
 		System.out.printf("seedlist size is %d\n", seedlist.size());
 		System.out.printf("score is %f\n", calculateScore(seedlist));
 		return seedlist;
 	}
 
-	private void recolorLowProducingSeeds(ArrayList<seed> seedlist) {
-		SeedGraph seedgraph = new SeedGraph(seedlist);
-		for (int i = 0; i < seedlist.size(); i++)
-			if (seedgraph.isLowProducer(i))
+	private void recolorBoard(ArrayList<seed> seedlist) {
+		for (int j = 0; j < 3; j++) {
+			for (int i = 0; i < seedlist.size(); i++) {
+				double origScore = calculateScore(seedlist);
+				// change the type to calculate the score
 				seedlist.get(i).tetraploid = !seedlist.get(i).tetraploid;
-	}
-
-	private ArrayList<seed> getSpreadBoard() {
-		ArrayList<seed> tmplist = new ArrayList<seed>();
-		int seedType = 1;
-		boolean alternateRow = true;
-		for (double i = distowall; i <= length - distowall; i = i + distoseed) {
-
-			// alternate initial seed type per row
-			if (alternateRow)
-				seedType = seedType * -1;
-			alternateRow = !alternateRow;
-
-			for (double j = distowall; j <= width - distowall; j = j
-					+ distoseed) {
-				seed tmp;
-				// alternate seed type
-				if (seedType == 1) {
-					tmp = new seed(i, j, false);
-					seedType *= -1;
-				} else {
-					tmp = new seed(i, j, true);
-					seedType *= -1;
-				}
-				if (validateSeed(tmp))
-					tmplist.add(tmp);
+				double diffScore = calculateScore(seedlist);
+				// if the original score was better, change it back
+				if (origScore > diffScore)
+					seedlist.get(i).tetraploid = !seedlist.get(i).tetraploid;
 			}
-			seedType = 1;
 		}
-		return tmplist;
 	}
 
-	
-	//North West 
+	// North West
 	private ArrayList<seed> getHexagonalNWAlternatingBoard() {
 
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean shift = false;
 		boolean alternateRow = true;
-		for (double j = distowall; j <= length - distowall; j = j+ getHexagonalOffsetY() + epsilon) {
-		if (!alternateRow)
-		seedType *= -1;
-		alternateRow = !alternateRow;
-		for (double i = distowall; i <= width - distowall; i = i+ distoseed) {
-		seed tmp = new seed(i, j, false);
-		if (shift) {
-		tmp.x += getHexagonalOffsetX();
+		for (double j = distowall; j <= length - distowall; j = j + getHexagonalOffsetY() + epsilon) {
+			if (!alternateRow)
+				seedType *= -1;
+			alternateRow = !alternateRow;
+			for (double i = distowall; i <= width - distowall; i = i + distoseed) {
+				seed tmp = new seed(i, j, false);
+				if (shift) {
+					tmp.x += getHexagonalOffsetX();
+				}
+				if (seedType == 1) {
+					tmp.tetraploid = true;
+				}
+				seedType *= -1;
+				if (validateSeed(tmp))
+					tmplist.add(tmp);
+			}
+			seedType = 1;
+			shift = !shift;
 		}
-		if (seedType == 1) {
-		tmp.tetraploid = true;
-		}
-		seedType *= -1;
-		if (validateSeed(tmp))
-		tmplist.add(tmp);
-		}
-		seedType = 1;
-		shift = !shift;
-		}
-		recolorLowProducingSeeds(tmplist);
+		recolorBoard(tmplist);
 		return tmplist;
-		}
-	
-	
-	//North East 
+	}
+
+	// North East
 	private ArrayList<seed> getHexagonalNEAlternatingBoard() {
 
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean shift = false;
 		boolean alternateRow = true;
-		for (double j = distowall; j <= length - distowall; j = j+ getHexagonalOffsetY() + epsilon) {
-		if (!alternateRow)
-		seedType *= -1;
-		alternateRow = !alternateRow;
-		for (double i = width - distowall; i >=distowall; i = i- distoseed) {
-		seed tmp = new seed(i, j, false);
-		if (shift) {
-		tmp.x -= getHexagonalOffsetX();
+		for (double j = distowall; j <= length - distowall; j = j + getHexagonalOffsetY() + epsilon) {
+			if (!alternateRow)
+				seedType *= -1;
+			alternateRow = !alternateRow;
+			for (double i = width - distowall; i >= distowall; i = i - distoseed) {
+				seed tmp = new seed(i, j, false);
+				if (shift) {
+					tmp.x -= getHexagonalOffsetX();
+				}
+				if (seedType == 1) {
+					tmp.tetraploid = true;
+				}
+				seedType *= -1;
+				if (validateSeed(tmp))
+					tmplist.add(tmp);
+			}
+			seedType = 1;
+			shift = !shift;
 		}
-		if (seedType == 1) {
-		tmp.tetraploid = true;
-		}
-		seedType *= -1;
-		if (validateSeed(tmp))
-		tmplist.add(tmp);
-		}
-		seedType = 1;
-		shift = !shift;
-		}
-		recolorLowProducingSeeds(tmplist);
+		recolorBoard(tmplist);
 		return tmplist;
+	}
+
+	// South West
+	private ArrayList<seed> getHexagonalSWAlternatingBoard() {
+
+		ArrayList<seed> tmplist = new ArrayList<seed>();
+		int seedType = 1;
+		boolean shift = false;
+		boolean alternateRow = true;
+		for (double j = length - distowall; j >= distowall; j = j - getHexagonalOffsetY() - epsilon) {
+			if (!alternateRow)
+				seedType *= -1;
+			alternateRow = !alternateRow;
+			for (double i = distowall; i <= width - distowall; i = i + distoseed) {
+				seed tmp = new seed(i, j, false);
+				if (shift) {
+					tmp.x += getHexagonalOffsetX();
+				}
+				if (seedType == 1) {
+					tmp.tetraploid = true;
+				}
+				seedType *= -1;
+				if (validateSeed(tmp))
+					tmplist.add(tmp);
+			}
+			seedType = 1;
+			shift = !shift;
 		}
-	
-	//South West 
-		private ArrayList<seed> getHexagonalSWAlternatingBoard() {
+		recolorBoard(tmplist);
+		return tmplist;
+	}
 
-			ArrayList<seed> tmplist = new ArrayList<seed>();
-			int seedType = 1;
-			boolean shift = false;
-			boolean alternateRow = true;
-			for (double j = length - distowall; j >= distowall; j = j- getHexagonalOffsetY() - epsilon) { 
+	// South East
+	private ArrayList<seed> getHexagonalSEAlternatingBoard() {
+
+		ArrayList<seed> tmplist = new ArrayList<seed>();
+		int seedType = 1;
+		boolean shift = false;
+		boolean alternateRow = true;
+		for (double j = length - distowall; j >= distowall; j = j - getHexagonalOffsetY() - epsilon) {
 			if (!alternateRow)
-			seedType *= -1;
+				seedType *= -1;
 			alternateRow = !alternateRow;
-			for (double i = distowall; i <= width - distowall; i = i+ distoseed) {
-			seed tmp = new seed(i, j, false);
-			if (shift) {
-			tmp.x += getHexagonalOffsetX();
-			}
-			if (seedType == 1) {
-			tmp.tetraploid = true;
-			}
-			seedType *= -1;
-			if (validateSeed(tmp))
-			tmplist.add(tmp);
+			for (double i = width - distowall; i >= distowall; i = i - distoseed) {
+				seed tmp = new seed(i, j, false);
+				if (shift) {
+					tmp.x -= getHexagonalOffsetX();
+				}
+				if (seedType == 1) {
+					tmp.tetraploid = true;
+				}
+				seedType *= -1;
+				if (validateSeed(tmp))
+					tmplist.add(tmp);
 			}
 			seedType = 1;
 			shift = !shift;
-			}
-			recolorLowProducingSeeds(tmplist);
-			return tmplist;
-			}
-		
-		//South East 
-		private ArrayList<seed> getHexagonalSEAlternatingBoard() {
+		}
+		recolorBoard(tmplist);
+		return tmplist;
+	}
 
-			ArrayList<seed> tmplist = new ArrayList<seed>();
-			int seedType = 1;
-			boolean shift = false;
-			boolean alternateRow = true;
-			for (double j = length - distowall; j >= distowall; j = j- getHexagonalOffsetY() - epsilon) { 
-			if (!alternateRow)
-			seedType *= -1;
-			alternateRow = !alternateRow;
-			for (double i = width - distowall; i >=distowall; i = i- distoseed) {
-			seed tmp = new seed(i, j, false);
-			if (shift) {
-			tmp.x -= getHexagonalOffsetX();
-			}
-			if (seedType == 1) {
-			tmp.tetraploid = true;
-			}
-			seedType *= -1;
-			if (validateSeed(tmp))
-			tmplist.add(tmp);
-			}
-			seedType = 1;
-			shift = !shift;
-			}
-			recolorLowProducingSeeds(tmplist);
-			return tmplist;
-			}
-		
-		
-//North West
+	// North West
 	private ArrayList<seed> getNWAlternatingBoard() {
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
@@ -280,8 +244,7 @@ public class Player extends watermelon.sim.Player {
 			if (alternateRow)
 				seedType = seedType * -1;
 			alternateRow = !alternateRow;
-			for (double j = distowall; j <= length - distowall; j = j
-					+ distoseed) {
+			for (double j = distowall; j <= length - distowall; j = j + distoseed) {
 				seed tmp;
 				// alternate seed type
 				if (seedType == 1) {
@@ -298,105 +261,98 @@ public class Player extends watermelon.sim.Player {
 		}
 		return tmplist;
 	}
-	
-	//North East
-		private ArrayList<seed> getNEAlternatingBoard() {
-			ArrayList<seed> tmplist = new ArrayList<seed>();
-			int seedType = 1;
-			boolean alternateRow = true;
-			for (double i = width - distowall; i >= distowall; i = i - distoseed) {
 
-				// alternate initial seed type per row
-				if (alternateRow)
-					seedType = seedType * -1;
-				alternateRow = !alternateRow;
-				for (double j = distowall; j <= length - distowall; j = j
-						+ distoseed) {
-					seed tmp;
-					// alternate seed type
-					if (seedType == 1) {
-						tmp = new seed(i, j, false);
-						seedType *= -1;
-					} else {
-						tmp = new seed(i, j, true);
-						seedType *= -1;
-					}
-					if (validateSeed(tmp))
-						tmplist.add(tmp);
+	// North East
+	private ArrayList<seed> getNEAlternatingBoard() {
+		ArrayList<seed> tmplist = new ArrayList<seed>();
+		int seedType = 1;
+		boolean alternateRow = true;
+		for (double i = width - distowall; i >= distowall; i = i - distoseed) {
+
+			// alternate initial seed type per row
+			if (alternateRow)
+				seedType = seedType * -1;
+			alternateRow = !alternateRow;
+			for (double j = distowall; j <= length - distowall; j = j + distoseed) {
+				seed tmp;
+				// alternate seed type
+				if (seedType == 1) {
+					tmp = new seed(i, j, false);
+					seedType *= -1;
+				} else {
+					tmp = new seed(i, j, true);
+					seedType *= -1;
 				}
-				seedType = 1;
+				if (validateSeed(tmp))
+					tmplist.add(tmp);
 			}
-			return tmplist;
+			seedType = 1;
 		}
+		return tmplist;
+	}
 
-		
-		//South West
-		private ArrayList<seed> getSWAlternatingBoard() {
-			ArrayList<seed> tmplist = new ArrayList<seed>();
-			int seedType = 1;
-			boolean alternateRow = true;
-			for (double i = distowall; i <= width - distowall; i = i + distoseed) {
+	// South West
+	private ArrayList<seed> getSWAlternatingBoard() {
+		ArrayList<seed> tmplist = new ArrayList<seed>();
+		int seedType = 1;
+		boolean alternateRow = true;
+		for (double i = distowall; i <= width - distowall; i = i + distoseed) {
 
-				// alternate initial seed type per row
-				if (alternateRow)
-					seedType = seedType * -1;
-				alternateRow = !alternateRow;
-				for (double j = length - distowall; j >= distowall; j = j
-						- distoseed) {
-					seed tmp;
-					// alternate seed type
-					if (seedType == 1) {
-						tmp = new seed(i, j, false);
-						seedType *= -1;
-					} else {
-						tmp = new seed(i, j, true);
-						seedType *= -1;
-					}
-					if (validateSeed(tmp))
-						tmplist.add(tmp);
+			// alternate initial seed type per row
+			if (alternateRow)
+				seedType = seedType * -1;
+			alternateRow = !alternateRow;
+			for (double j = length - distowall; j >= distowall; j = j - distoseed) {
+				seed tmp;
+				// alternate seed type
+				if (seedType == 1) {
+					tmp = new seed(i, j, false);
+					seedType *= -1;
+				} else {
+					tmp = new seed(i, j, true);
+					seedType *= -1;
 				}
-				seedType = 1;
+				if (validateSeed(tmp))
+					tmplist.add(tmp);
 			}
-			return tmplist;
+			seedType = 1;
 		}
+		return tmplist;
+	}
 
-		
-		//South East
-		private ArrayList<seed> getSEAlternatingBoard() {
-			ArrayList<seed> tmplist = new ArrayList<seed>();
-			int seedType = 1;
-			boolean alternateRow = true;
-			for (double i = width - distowall; i >= distowall; i = i - distoseed) {
+	// South East
+	private ArrayList<seed> getSEAlternatingBoard() {
+		ArrayList<seed> tmplist = new ArrayList<seed>();
+		int seedType = 1;
+		boolean alternateRow = true;
+		for (double i = width - distowall; i >= distowall; i = i - distoseed) {
 
-				// alternate initial seed type per row
-				if (alternateRow)
-					seedType = seedType * -1;
-				alternateRow = !alternateRow;
-				for (double j = length - distowall; j >= distowall; j = j
-						- distoseed) {
-					seed tmp;
-					// alternate seed type
-					if (seedType == 1) {
-						tmp = new seed(i, j, false);
-						seedType *= -1;
-					} else {
-						tmp = new seed(i, j, true);
-						seedType *= -1;
-					}
-					if (validateSeed(tmp))
-						tmplist.add(tmp);
+			// alternate initial seed type per row
+			if (alternateRow)
+				seedType = seedType * -1;
+			alternateRow = !alternateRow;
+			for (double j = length - distowall; j >= distowall; j = j - distoseed) {
+				seed tmp;
+				// alternate seed type
+				if (seedType == 1) {
+					tmp = new seed(i, j, false);
+					seedType *= -1;
+				} else {
+					tmp = new seed(i, j, true);
+					seedType *= -1;
 				}
-				seedType = 1;
+				if (validateSeed(tmp))
+					tmplist.add(tmp);
 			}
-			return tmplist;
+			seedType = 1;
 		}
-
+		return tmplist;
+	}
 
 	private ArrayList<seed> getRandomBoard() {
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		for (double i = distowall; i < width - distowall; i = i + distoseed) {
-			for (double j = distowall; j < length - distowall; j = j
-					+ distoseed) {
+			for (double j = distowall; j < length - distowall; j = j + distoseed) {
 				seed tmp;
 				if (random.nextInt(2) == 0)
 					tmp = new seed(i, j, false);
@@ -433,20 +389,14 @@ public class Player extends watermelon.sim.Player {
 			double difdis = 0.0;
 			for (int j = 0; j < seedlist.size(); j++) {
 				if (j != i) {
-					totaldis = totaldis
-							+ Math.pow(
-									distance(seedlist.get(i), seedlist.get(j)),
-									-2);
+					totaldis = totaldis + Math.pow(distance(seedlist.get(i), seedlist.get(j)), -2);
 				}
 			}
 			for (int j = 0; j < seedlist.size(); j++) {
 				if (j != i
-						&& ((seedlist.get(i).tetraploid && !seedlist.get(j).tetraploid) || (!seedlist
-								.get(i).tetraploid && seedlist.get(j).tetraploid))) {
-					difdis = difdis
-							+ Math.pow(
-									distance(seedlist.get(i), seedlist.get(j)),
-									-2);
+						&& ((seedlist.get(i).tetraploid && !seedlist.get(j).tetraploid) || (!seedlist.get(i).tetraploid && seedlist
+								.get(j).tetraploid))) {
+					difdis = difdis + Math.pow(distance(seedlist.get(i), seedlist.get(j)), -2);
 				}
 			}
 			chance = difdis / totaldis;
