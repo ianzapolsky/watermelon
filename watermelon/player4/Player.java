@@ -74,13 +74,16 @@ public class Player extends watermelon.sim.Player {
 		ArrayList<seed> hexAlternatingNE = getHexagonalNEAlternatingBoard();
 		ArrayList<seed> hexAlternatingSW = getHexagonalSWAlternatingBoard();
 		ArrayList<seed> hexAlternatingSE = getHexagonalSEAlternatingBoard();
-		ArrayList<seed> gridAlternating = getAlternatingBoard();
+		ArrayList<seed> gridAlternatingNW = getNWAlternatingBoard();
+		ArrayList<seed> gridAlternatingNE = getNEAlternatingBoard();
+		ArrayList<seed> gridAlternatingSW = getSWAlternatingBoard();
+		ArrayList<seed> gridAlternatingSE = getSEAlternatingBoard();
 
 		
-		if (calculateScore(hexAlternatingNW) > calculateScore(gridAlternating))
+		if (calculateScore(hexAlternatingNW) > calculateScore(gridAlternatingNW))
 			seedlist = hexAlternatingNW;
 		else
-			seedlist = gridAlternating; 
+			seedlist = gridAlternatingNW; 
 		
 		if (calculateScore(hexAlternatingNE) > calculateScore(seedlist))
 			seedlist = hexAlternatingNE;
@@ -90,6 +93,15 @@ public class Player extends watermelon.sim.Player {
 			
 		if (calculateScore(hexAlternatingSE) > calculateScore(seedlist))
 			seedlist = hexAlternatingSE;
+			
+		if (calculateScore(gridAlternatingNE) > calculateScore(seedlist))
+			seedlist = gridAlternatingNE;
+			
+		if (calculateScore(gridAlternatingSW) > calculateScore(seedlist))
+			seedlist = gridAlternatingSW;
+			
+		if (calculateScore(gridAlternatingSE) > calculateScore(seedlist))
+			seedlist = gridAlternatingSE;
 	
 
 		System.out.printf("seedlist size is %d\n", seedlist.size());
@@ -257,8 +269,8 @@ public class Player extends watermelon.sim.Player {
 			}
 		
 		
-
-	private ArrayList<seed> getAlternatingBoard() {
+//North West
+	private ArrayList<seed> getNWAlternatingBoard() {
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean alternateRow = true;
@@ -268,10 +280,8 @@ public class Player extends watermelon.sim.Player {
 			if (alternateRow)
 				seedType = seedType * -1;
 			alternateRow = !alternateRow;
-			System.out.println("i = " + i);
 			for (double j = distowall; j <= length - distowall; j = j
 					+ distoseed) {
-				System.out.println("j = " + j);
 				seed tmp;
 				// alternate seed type
 				if (seedType == 1) {
@@ -288,6 +298,99 @@ public class Player extends watermelon.sim.Player {
 		}
 		return tmplist;
 	}
+	
+	//North East
+		private ArrayList<seed> getNEAlternatingBoard() {
+			ArrayList<seed> tmplist = new ArrayList<seed>();
+			int seedType = 1;
+			boolean alternateRow = true;
+			for (double i = width - distowall; i >= distowall; i = i - distoseed) {
+
+				// alternate initial seed type per row
+				if (alternateRow)
+					seedType = seedType * -1;
+				alternateRow = !alternateRow;
+				for (double j = distowall; j <= length - distowall; j = j
+						+ distoseed) {
+					seed tmp;
+					// alternate seed type
+					if (seedType == 1) {
+						tmp = new seed(i, j, false);
+						seedType *= -1;
+					} else {
+						tmp = new seed(i, j, true);
+						seedType *= -1;
+					}
+					if (validateSeed(tmp))
+						tmplist.add(tmp);
+				}
+				seedType = 1;
+			}
+			return tmplist;
+		}
+
+		
+		//South West
+		private ArrayList<seed> getSWAlternatingBoard() {
+			ArrayList<seed> tmplist = new ArrayList<seed>();
+			int seedType = 1;
+			boolean alternateRow = true;
+			for (double i = distowall; i <= width - distowall; i = i + distoseed) {
+
+				// alternate initial seed type per row
+				if (alternateRow)
+					seedType = seedType * -1;
+				alternateRow = !alternateRow;
+				for (double j = length - distowall; j >= distowall; j = j
+						- distoseed) {
+					seed tmp;
+					// alternate seed type
+					if (seedType == 1) {
+						tmp = new seed(i, j, false);
+						seedType *= -1;
+					} else {
+						tmp = new seed(i, j, true);
+						seedType *= -1;
+					}
+					if (validateSeed(tmp))
+						tmplist.add(tmp);
+				}
+				seedType = 1;
+			}
+			return tmplist;
+		}
+
+		
+		//South East
+		private ArrayList<seed> getSEAlternatingBoard() {
+			ArrayList<seed> tmplist = new ArrayList<seed>();
+			int seedType = 1;
+			boolean alternateRow = true;
+			for (double i = width - distowall; i >= distowall; i = i - distoseed) {
+
+				// alternate initial seed type per row
+				if (alternateRow)
+					seedType = seedType * -1;
+				alternateRow = !alternateRow;
+				for (double j = length - distowall; j >= distowall; j = j
+						- distoseed) {
+					seed tmp;
+					// alternate seed type
+					if (seedType == 1) {
+						tmp = new seed(i, j, false);
+						seedType *= -1;
+					} else {
+						tmp = new seed(i, j, true);
+						seedType *= -1;
+					}
+					if (validateSeed(tmp))
+						tmplist.add(tmp);
+				}
+				seedType = 1;
+			}
+			return tmplist;
+		}
+
 
 	private ArrayList<seed> getRandomBoard() {
 		ArrayList<seed> tmplist = new ArrayList<seed>();
