@@ -47,33 +47,6 @@ public class SeedGraph {
 		return false;
 	}
 
-	// returns the score
-	private double calculateScore(ArrayList<seed> seedlist) {
-		double total = 0.0;
-		for (int i = 0; i < seedlist.size(); i++) {
-			double score = 0.0;
-			double chance = 0.0;
-			double totaldis = 0.0;
-			double difdis = 0.0;
-			for (int j = 0; j < seedlist.size(); j++) {
-				if (j != i) {
-					totaldis = totaldis + Math.pow(distance(seedlist.get(i), seedlist.get(j)), -2);
-				}
-			}
-			for (int j = 0; j < seedlist.size(); j++) {
-				if (j != i
-						&& ((seedlist.get(i).tetraploid && !seedlist.get(j).tetraploid) || (!seedlist.get(i).tetraploid && seedlist
-								.get(j).tetraploid))) {
-					difdis = difdis + Math.pow(distance(seedlist.get(i), seedlist.get(j)), -2);
-				}
-			}
-			chance = difdis / totaldis;
-			score = chance + (1 - chance) * Player.s;
-			total = total + score;
-		}
-		return total;
-	}
-
 	// return the number of plants that are adjacent to plant at seedIndex that
 	// are also of the same ploidy
 	public int getAdjacentSame(int seedIndex) {
