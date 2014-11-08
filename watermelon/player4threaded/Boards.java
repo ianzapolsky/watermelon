@@ -42,13 +42,7 @@ public class Boards extends Thread {
 			shift = !shift;
 		}
 
-		seedgraph.shiftRowsAndCols(tmplist);
-
-		// for (int k = 0; k < 5; k++) {
-		// seedgraph.recolorBoard(tmplist);
-		// seedgraph.shiftRowsAndCols(tmplist);
-		// }
-		return tmplist;
+		return seedgraph.getMaxBoard(tmplist);
 	}
 
 	// North East
@@ -77,11 +71,7 @@ public class Boards extends Thread {
 			seedType = 1;
 			shift = !shift;
 		}
-		for (int k = 0; k < 5; k++) {
-			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
-		}
-		return tmplist;
+		return seedgraph.getMaxBoard(tmplist);
 	}
 
 	// South West
@@ -110,11 +100,7 @@ public class Boards extends Thread {
 			seedType = 1;
 			shift = !shift;
 		}
-		for (int k = 0; k < 5; k++) {
-			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
-		}
-		return tmplist;
+		return seedgraph.getMaxBoard(tmplist);
 	}
 
 	// South East
@@ -143,11 +129,7 @@ public class Boards extends Thread {
 			seedType = 1;
 			shift = !shift;
 		}
-		for (int k = 0; k < 5; k++) {
-			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
-		}
-		return tmplist;
+		return seedgraph.getMaxBoard(tmplist);
 	}
 
 	// North West
