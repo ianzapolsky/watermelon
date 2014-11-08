@@ -1,36 +1,23 @@
 package watermelon.sim;
 
 // general utilities
-import java.awt.BasicStroke;
-import java.awt.Color;
-// gui utility
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.*;
 import java.util.List;
+import java.util.*;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
+import javax.tools.*;
+
+import java.util.concurrent.*;
+import java.net.URL;
+
+// gui utility
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+
+import javax.swing.*;
+
+import watermelon.sim.seed;
 
 public class watermelon {
 	static String ROOT_DIR = "watermelon";
@@ -43,13 +30,13 @@ public class watermelon {
 
 	// Vary saturation of seeds by their score?
 	static boolean enhancedColors = true;
-
+	
 	// Step by step trace
 	static boolean trace = true;
 
 	// enable gui
 	static boolean gui = true;
-
+	static String group = null;
 	static double L;
 	static double W;
 	static ArrayList<Pair> treelist = new ArrayList<Pair>();
@@ -58,9 +45,14 @@ public class watermelon {
 	static Player player;
 
 	static double dimension = 100.0;
-	static double distoseed = 2.00;
-	static double distowall = 1.00;
-	static double distotree = 2.00;
+	
+	static double distoseed = 1.999999;
+	static double distowall = 0.999999;
+	static double distotree = 1.999999;
+	
+	//public static double distoseed = 1.99999999;
+	//static double distowall = 0.99999999;
+	//public static double distotree = 1.9999999;
 	static double s = 0.00;
 	static double total = 0.00;
 
@@ -87,10 +79,12 @@ public class watermelon {
 	static Player loadPlayer(String group) {
 		try {
 			// get tools
-			URL url = watermelon.class.getProtectionDomain().getCodeSource().getLocation();
+			URL url = watermelon.class.getProtectionDomain().getCodeSource()
+					.getLocation();
 			// use the customized reloader, ensure clearing all static
 			// information
-			ClassLoader loader = new ClassReloader(url, watermelon.class.getClassLoader());
+			ClassLoader loader = new ClassReloader(url,
+					watermelon.class.getClassLoader());
 			if (loader == null)
 				throw new Exception("Cannot load class loader");
 			JavaCompiler compiler = null;
@@ -99,12 +93,15 @@ public class watermelon {
 			String sep = File.separator;
 			// load players
 			// search for compiled files
-			File classFile = new File(ROOT_DIR + sep + group + sep + "Player.class");
+			File classFile = new File(ROOT_DIR + sep + group + sep
+					+ "Player.class");
 			System.err.println(classFile.getAbsolutePath());
 			if (!classFile.exists() || recompile) {
 				// delete all class files
-				List<File> classFiles = directoryFiles(ROOT_DIR + sep + group, ".class");
-				System.err.print("Deleting " + classFiles.size() + " class files...   ");
+				List<File> classFiles = directoryFiles(ROOT_DIR + sep + group,
+						".class");
+				System.err.print("Deleting " + classFiles.size()
+						+ " class files...   ");
 				for (File file : classFiles)
 					file.delete();
 				System.err.println("OK");
@@ -113,23 +110,29 @@ public class watermelon {
 				if (compiler == null)
 					throw new Exception("Cannot load compiler");
 				if (fileManager == null)
-					fileManager = compiler.getStandardFileManager(null, null, null);
+					fileManager = compiler.getStandardFileManager(null, null,
+							null);
 				if (fileManager == null)
 					throw new Exception("Cannot load file manager");
 				// compile all files
-				List<File> javaFiles = directoryFiles(ROOT_DIR + sep + group, ".java");
-				System.err.print("Compiling " + javaFiles.size() + " source files...   ");
-				Iterable<? extends JavaFileObject> units = fileManager.getJavaFileObjectsFromFiles(javaFiles);
-				boolean ok = compiler.getTask(null, fileManager, null, null, null, units).call();
+				List<File> javaFiles = directoryFiles(ROOT_DIR + sep + group,
+						".java");
+				System.err.print("Compiling " + javaFiles.size()
+						+ " source files...   ");
+				Iterable<? extends JavaFileObject> units = fileManager
+						.getJavaFileObjectsFromFiles(javaFiles);
+				boolean ok = compiler.getTask(null, fileManager, null, null,
+						null, units).call();
 				if (!ok)
 					throw new Exception("Compile error");
 				System.err.println("OK");
 			}
 			// load class
 			System.err.print("Loading player class...   ");
-			Class playerClass = loader.loadClass(ROOT_DIR + "." + group + ".Player");
+			Class playerClass = loader.loadClass(ROOT_DIR + "." + group
+					+ ".Player");
 			System.err.println("OK");
-
+			
 			Player player = (Player) playerClass.newInstance();
 			if (player == null)
 				throw new Exception("Load error");
@@ -172,8 +175,8 @@ public class watermelon {
 		JFrame f;
 		FieldPanel field;
 		JButton next;
-		// JButton next10;
-		// JButton next50;
+		//JButton next10;
+		//JButton next50;
 		JLabel label;
 		JLabel label0;
 
@@ -187,7 +190,7 @@ public class watermelon {
 
 		private boolean performOnce() {
 			playStep();
-			label.setText("Player Achieve the Score of " + total);
+			label.setText(group+" Achieve the Score of " + total+" using "+seedlist.size()+" seeds");
 			label.setVisible(true);
 			return true;
 		}
@@ -216,10 +219,11 @@ public class watermelon {
 
 			label = new JLabel();
 			label.setVisible(false);
-			label.setBounds(0, 60, 400, 50);
+			label.setBounds(0, 60, 600, 50);
 			label.setFont(new Font("Arial", Font.PLAIN, 15));
 
 			field.setBounds(100, 100, FIELD_SIZE + 50, FIELD_SIZE + 50);
+
 
 			this.add(next);
 			this.add(label);
@@ -259,31 +263,32 @@ public class watermelon {
 			g2.setStroke(stroke);
 			double size = Math.max(W, L);
 			// draw 2D rectangle
-			g2.draw(new Rectangle2D.Double(ox, oy, dimension * s / size * W, dimension * s / size * L));
-
+			g2.draw(new Rectangle2D.Double(ox, oy, dimension * s / size * W,
+					dimension * s / size * L));
+			
 			double x_in = (dimension * s) / size;
 			double y_in = (dimension * s) / size;
-
-			for (int i = 0; i < treelist.size(); i++) {
+			
+			for (int i=0; i<treelist.size(); i++) {
 				g2.setPaint(Color.green);
-				// g2.fill(new Rectangle2D.Double(ox+treelist.get(i).x,
-				// oy+treelist.get(i).y, x_in, y_in));
+				//g2.fill(new Rectangle2D.Double(ox+treelist.get(i).x,
+					//	oy+treelist.get(i).y, x_in, y_in));
 				drawTree(g2, treelist.get(i));
 			}
-
+			
 			for (int i = 0; i < seedlist.size(); i++) {
 				// drawPoint(g2, pointers[i]);
 				drawPoint(g2, seedlist.get(i));
 				// }
 			}
 		}
-
+		
 		public void drawTree(Graphics2D g2, Pair pr) {
-			g2.setPaint(Color.GREEN);
+				g2.setPaint(Color.GREEN);
 			double size = Math.max(W, L);
 			double x_in = (dimension * s) / size;
 			double y_in = (dimension * s) / size;
-			Ellipse2D e = new Ellipse2D.Double(ox + pr.x * x_in - x_in, oy + pr.y * y_in - y_in, 2 * x_in, 2 * y_in);
+			Ellipse2D e = new Ellipse2D.Double(ox + pr.x*x_in - x_in, oy + pr.y*y_in - y_in, 2*x_in , 2*y_in);
 			g2.setStroke(stroke);
 			g2.draw(e);
 			g2.fill(e);
@@ -291,9 +296,9 @@ public class watermelon {
 		}
 
 		public void drawPoint(Graphics2D g2, seed sd) {
-			double saturation = sd.score * sd.score * 0.75 + 0.25;
-
-			if (sd.tetraploid == true) {
+	        double saturation = sd.score*sd.score * 0.75 + 0.25;
+	        
+			if (sd.tetraploid == true) { 
 				if (enhancedColors)
 					g2.setPaint(new Color(Color.HSBtoRGB((float) 0.6, (float) saturation, (float) 1.0)));
 				else
@@ -304,12 +309,12 @@ public class watermelon {
 				else
 					g2.setPaint(Color.MAGENTA);
 			}
-
+			
 			double size = Math.max(W, L);
 			double x_in = (dimension * s) / size;
 			double y_in = (dimension * s) / size;
-
-			Ellipse2D e = new Ellipse2D.Double(ox + sd.x * x_in - x_in, oy + sd.y * y_in - y_in, 2 * x_in, 2 * y_in);
+			
+			Ellipse2D e = new Ellipse2D.Double(ox + sd.x*x_in - x_in, oy + sd.y*y_in - y_in, 2*x_in, 2*y_in);
 			g2.setStroke(stroke);
 			g2.draw(e);
 			g2.fill(e);
@@ -338,7 +343,7 @@ public class watermelon {
 
 	double calculatescore() {
 		total = 0;
-
+		
 		for (int i = 0; i < seedlist.size(); i++) {
 			double score;
 			double chance = 0.0;
@@ -346,18 +351,24 @@ public class watermelon {
 			double difdis = 0.0;
 			for (int j = 0; j < seedlist.size(); j++) {
 				if (j != i) {
-					totaldis = totaldis + Math.pow(distanceseed(seedlist.get(i), seedlist.get(j)), -2);
+					totaldis = totaldis
+							+ Math.pow(
+									distanceseed(seedlist.get(i),
+											seedlist.get(j)), -2);
 				}
 			}
 			for (int j = 0; j < seedlist.size(); j++) {
 				if (j != i
-						&& ((seedlist.get(i).tetraploid && !seedlist.get(j).tetraploid) || (!seedlist.get(i).tetraploid && seedlist
-								.get(j).tetraploid))) {
-					difdis = difdis + Math.pow(distanceseed(seedlist.get(i), seedlist.get(j)), -2);
+						&& ((seedlist.get(i).tetraploid && !seedlist.get(j).tetraploid) || (!seedlist
+								.get(i).tetraploid && seedlist.get(j).tetraploid))) {
+					difdis = difdis
+							+ Math.pow(
+									distanceseed(seedlist.get(i),
+											seedlist.get(j)), -2);
 				}
 			}
-			// System.out.println(totaldis);
-			// System.out.println(difdis);
+			//System.out.println(totaldis);
+			//System.out.println(difdis);
 			chance = difdis / totaldis;
 			score = chance + (1 - chance) * s;
 			seedlist.get(i).score = score;
@@ -372,32 +383,43 @@ public class watermelon {
 		for (int i = 0; i < nseeds; i++) {
 			for (int j = i + 1; j < nseeds; j++) {
 				if (distanceseed(seedlistin.get(i), seedlistin.get(j)) < distoseed) {
-					System.out.printf("The distance between %d seed  %d seed is %f\n", i, j,
+					System.out.printf(
+							"The distance between %d seed  %d seed is %.16f\n", i,
+							j,
 							distanceseed(seedlistin.get(i), seedlistin.get(j)));
 					return false;
 				}
 			}
 		}
 		for (int i = 0; i < nseeds; i++) {
-			if (seedlistin.get(i).x < 0 || seedlistin.get(i).x > W || seedlistin.get(i).y < 0
-					|| seedlistin.get(i).y > L) {
-				System.out.printf("The %d seed (%f, %f)  is out of the field\n", i, seedlistin.get(i).x,
-						seedlistin.get(i).y);
+			if (seedlistin.get(i).x < 0 || seedlistin.get(i).x > W
+					|| seedlistin.get(i).y < 0 || seedlistin.get(i).y > L) {
+				System.out.printf(
+						"The %d seed (%f, %f)  is out of the field\n", i,
+						seedlistin.get(i).x, seedlistin.get(i).y);
 				return false;
 			}
-			if (seedlistin.get(i).x < distowall || W - seedlistin.get(i).x < distowall
-					|| seedlistin.get(i).y < distowall || L - seedlistin.get(i).y < distowall) {
-				System.out.printf("The %d seed (%f, %f) is too close to the wall\n", i, seedlistin.get(i).x,
-						seedlistin.get(i).y);
+			if (seedlistin.get(i).x < distowall
+					|| W - seedlistin.get(i).x < distowall
+					|| seedlistin.get(i).y < distowall
+					|| L - seedlistin.get(i).y < distowall) {
+				System.out.printf(
+						"The %d seed (%f, %f) is too close to the wall\n", i,
+						seedlistin.get(i).x, seedlistin.get(i).y);
 				return false;
 			}
 		}
 		for (int i = 0; i < treelist.size(); i++) {
 			for (int j = 0; j < nseeds; j++) {
 				if (distance(seedlistin.get(j), treelist.get(i)) < distotree) {
-					System.out.printf("The %d seed (%f, %f) is too close to the tree (%f, %f), %f\n", j,
-							seedlistin.get(j).x, seedlistin.get(j).y, treelist.get(i).x, treelist.get(i).y,
-							distance(seedlistin.get(j), treelist.get(i)));
+					System.out
+							.printf("The %d seed (%f, %f) is too close to the tree (%f, %f), %f\n",
+									j,
+									seedlistin.get(j).x,
+									seedlistin.get(j).y,
+									treelist.get(i).x,
+									treelist.get(i).y,
+									distance(seedlistin.get(j), treelist.get(i)));
 					return false;
 				}
 			}
@@ -417,12 +439,15 @@ public class watermelon {
 		 */
 	}
 
-	/*
-	 * void init() { grid = new Point[L * W]; for (int i = 0; i < W; i++) { for
-	 * (int j = 0; j < L; j++) { grid[i * L + j] = new Point(i, j, false); } }
-	 * 
-	 * }
-	 */
+/*	void init() {
+		grid = new Point[L * W];
+		for (int i = 0; i < W; i++) {
+			for (int j = 0; j < L; j++) {
+				grid[i * L + j] = new Point(i, j, false);
+			}
+		}
+
+	}*/
 
 	watermelon() {
 		this.player = player;
@@ -466,7 +491,7 @@ public class watermelon {
 
 	public static void main(String[] args) throws Exception {
 		String map = null;
-		String group = null;
+		//String group = null;
 		if (args.length > 0)
 			map = args[0];
 		if (args.length > 1)
@@ -481,7 +506,7 @@ public class watermelon {
 			s = Double.parseDouble(args[5]);
 		player = loadPlayer(group);
 		watermelon game = new watermelon();
-		// game.init();
+		//game.init();
 		game.read(map);
 		game.playgui();
 	}
