@@ -1,8 +1,9 @@
 package watermelon.player4;
 
 import java.util.ArrayList;
-import java.util.Random;
 
+import watermelon.player4threaded.Boards;
+import watermelon.player4threaded.SeedGraph;
 import watermelon.sim.Pair;
 import watermelon.sim.seed;
 
@@ -18,7 +19,7 @@ public class Player extends watermelon.sim.Player {
 	double s;
 	ArrayList<Pair> treelist;
 	ArrayList<seed> seedlist;
-	Random random;
+
 	SeedGraph seedgraph;
 	Boards boards;
 
@@ -39,36 +40,63 @@ public class Player extends watermelon.sim.Player {
 		seedgraph = new SeedGraph(initTreelist, initWidth, initLength, initS);
 		boards = new Boards(seedgraph);
 
-		ArrayList<BoardThread> boardThreads = new ArrayList<BoardThread>();
+		ArrayList<seed> hexAlternatingNW = boards.getHexagonalNWBoard();
+		ArrayList<seed> hexAlternatingNE = boards.getHexagonalNEBoard();
+		ArrayList<seed> hexAlternatingSW = boards.getHexagonalSWBoard();
+		ArrayList<seed> hexAlternatingSE = boards.getHexagonalSEBoard();
+		ArrayList<seed> gridAlternatingNW = boards.getAlternatingNWBoard();
+		ArrayList<seed> gridAlternatingNE = boards.getAlternatingNEBoard();
+		ArrayList<seed> gridAlternatingSW = boards.getAlternatingSWBoard();
+		ArrayList<seed> gridAlternatingSE = boards.getAlternatingSEBoard();
 
-		HexagonalNWBoardThread t1 = new HexagonalNWBoardThread(seedgraph, boards);
-		HexagonalNWBoardThread t2 = new HexagonalNWBoardThread(seedgraph, boards);
-		HexagonalNWBoardThread t3 = new HexagonalNWBoardThread(seedgraph, boards);
-		HexagonalNWBoardThread t4 = new HexagonalNWBoardThread(seedgraph, boards);
-		HexagonalNWBoardThread t5 = new HexagonalNWBoardThread(seedgraph, boards);
-		HexagonalNWBoardThread t6 = new HexagonalNWBoardThread(seedgraph, boards);
-		HexagonalNWBoardThread t7 = new HexagonalNWBoardThread(seedgraph, boards);
-		HexagonalNWBoardThread t8 = new HexagonalNWBoardThread(seedgraph, boards);
+		double scoreHexAlternatingNW = seedgraph.calculateScore(hexAlternatingNW);
+		double scoreHexAlternatingNE = seedgraph.calculateScore(hexAlternatingNE);
+		double scoreHexAlternatingSW = seedgraph.calculateScore(hexAlternatingSW);
+		double scoreHexAlternatingSE = seedgraph.calculateScore(hexAlternatingSE);
+		double scoreGridAlternatingNW = seedgraph.calculateScore(gridAlternatingNW);
+		double scoreGridAlternatingNE = seedgraph.calculateScore(gridAlternatingNE);
+		double scoreGridAlternatingSW = seedgraph.calculateScore(gridAlternatingSW);
+		double scoreGridAlternatingSE = seedgraph.calculateScore(gridAlternatingSE);
 
-		boardThreads.add(t1);
-		boardThreads.add(t2);
-		boardThreads.add(t3);
-		boardThreads.add(t4);
-		boardThreads.add(t5);
-		boardThreads.add(t6);
-		boardThreads.add(t7);
-		boardThreads.add(t8);
+		double maxScore = 0;
+		if (scoreHexAlternatingNW > scoreGridAlternatingNW) {
+			seedlist = hexAlternatingNW;
+			maxScore = scoreHexAlternatingNW;
+		} else {
+			seedlist = gridAlternatingNW;
+			maxScore = scoreGridAlternatingNW;
+		}
 
-		for (BoardThread t : boardThreads)
-			t.run();
+		if (scoreHexAlternatingNE > maxScore) {
+			seedlist = hexAlternatingNE;
+			maxScore = scoreHexAlternatingNE;
+		}
 
-		BoardThread maxThread = boardThreads.get(0);
-		for (BoardThread t : boardThreads)
-			if (t.getScore() > maxThread.getScore())
-				maxThread = t;
+		if (scoreHexAlternatingSW > maxScore) {
+			seedlist = hexAlternatingSW;
+			maxScore = scoreHexAlternatingSW;
+		}
+		if (scoreHexAlternatingSE > maxScore) {
+			seedlist = hexAlternatingSE;
+			maxScore = scoreHexAlternatingSE;
+		}
+		if (scoreGridAlternatingNE > maxScore) {
+			seedlist = gridAlternatingNE;
+			maxScore = scoreGridAlternatingNE;
+		}
+		if (scoreGridAlternatingSW > maxScore) {
+			seedlist = gridAlternatingSW;
+			maxScore = scoreGridAlternatingSW;
+		}
+		if (scoreGridAlternatingSE > maxScore) {
+			seedlist = gridAlternatingSE;
+			maxScore = scoreGridAlternatingSE;
+		}
 
-		maxThread.getDetails();
-		return maxThread.getBoard();
+		System.out.println("maxScore = " + maxScore);
+		System.out.printf("seedlist size is %d\n", seedlist.size());
+		System.out.printf("score is %f\n", maxScore);
+		return seedlist;
 	}
 
 }

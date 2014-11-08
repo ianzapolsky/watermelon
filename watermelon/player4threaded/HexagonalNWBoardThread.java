@@ -1,25 +1,26 @@
-package watermelon.player4;
+package watermelon.player4threaded;
 
 import java.util.ArrayList;
 
 import watermelon.sim.seed;
 
-public class AlternatingSEBoardThread implements BoardThread {
+public class HexagonalNWBoardThread implements BoardRunnable {
 	SeedGraph seedgraph;
 	Boards boards;
 
 	ArrayList<seed> board;
 	double score;
 
-	public AlternatingSEBoardThread(SeedGraph initSeedGraph, Boards initBoards) {
+	public HexagonalNWBoardThread(SeedGraph initSeedGraph, Boards initBoards) {
 		seedgraph = initSeedGraph;
 		boards = initBoards;
 	}
 
 	public void run() {
-		board = boards.getAlternatingSEBoard();
+		System.out.println("NW Hexagonal Thread started running.");
+		board = boards.getHexagonalNWBoard();
 		score = seedgraph.calculateScore(board);
-		System.out.println("SE Alternating Thread finished running.");
+		System.out.println("NW Hexagonal Thread finished running.");
 	}
 
 	public double getScore() {
@@ -31,7 +32,7 @@ public class AlternatingSEBoardThread implements BoardThread {
 	}
 
 	public void getDetails() {
-		System.out.println("Alternating SE Board");
+		System.out.println("Hexagonal NW Board");
 		System.out.println("seedlist size is" + board.size());
 		System.out.println("score is " + score);
 	}

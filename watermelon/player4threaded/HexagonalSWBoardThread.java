@@ -1,10 +1,10 @@
-package watermelon.player4;
+package watermelon.player4threaded;
 
 import java.util.ArrayList;
 
 import watermelon.sim.seed;
 
-public class HexagonalSWBoardThread implements BoardThread {
+public class HexagonalSWBoardThread implements BoardRunnable {
 	SeedGraph seedgraph;
 	Boards boards;
 
@@ -17,6 +17,7 @@ public class HexagonalSWBoardThread implements BoardThread {
 	}
 
 	public void run() {
+		System.out.println("SW Hexagonal Thread started running.");
 		board = boards.getHexagonalSWBoard();
 		score = seedgraph.calculateScore(board);
 		System.out.println("SW Hexagonal Thread finished running.");

@@ -1,4 +1,4 @@
-package watermelon.player4;
+package watermelon.player4threaded;
 
 import java.util.ArrayList;
 
