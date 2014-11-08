@@ -18,7 +18,6 @@ public class Boards extends Thread {
 
 	// North West
 	public ArrayList<seed> getHexagonalNWBoard() {
-
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean shift = false;
@@ -42,10 +41,13 @@ public class Boards extends Thread {
 			seedType = 1;
 			shift = !shift;
 		}
-		for (int k = 0; k < 5; k++) {
-			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
-		}
+
+		seedgraph.shiftRowsAndCols(tmplist);
+
+		// for (int k = 0; k < 5; k++) {
+		// seedgraph.recolorBoard(tmplist);
+		// seedgraph.shiftRowsAndCols(tmplist);
+		// }
 		return tmplist;
 	}
 

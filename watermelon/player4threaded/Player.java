@@ -45,13 +45,13 @@ public class Player extends watermelon.sim.Player {
 		ArrayList<Thread> boardThreads = new ArrayList<Thread>();
 
 		boardRunnables.add(new HexagonalNWBoardThread(seedgraph, boards));
-		boardRunnables.add(new HexagonalNEBoardThread(seedgraph, boards));
-		boardRunnables.add(new HexagonalSWBoardThread(seedgraph, boards));
-		boardRunnables.add(new HexagonalSEBoardThread(seedgraph, boards));
-		boardRunnables.add(new AlternatingNWBoardThread(seedgraph, boards));
-		boardRunnables.add(new AlternatingNEBoardThread(seedgraph, boards));
-		boardRunnables.add(new AlternatingSWBoardThread(seedgraph, boards));
-		boardRunnables.add(new AlternatingSEBoardThread(seedgraph, boards));
+		// boardRunnables.add(new HexagonalNEBoardThread(seedgraph, boards));
+		// boardRunnables.add(new HexagonalSWBoardThread(seedgraph, boards));
+		// boardRunnables.add(new HexagonalSEBoardThread(seedgraph, boards));
+		// boardRunnables.add(new AlternatingNWBoardThread(seedgraph, boards));
+		// boardRunnables.add(new AlternatingNEBoardThread(seedgraph, boards));
+		// boardRunnables.add(new AlternatingSWBoardThread(seedgraph, boards));
+		// boardRunnables.add(new AlternatingSEBoardThread(seedgraph, boards));
 
 		ExecutorService threadPoolExecutor = new ThreadPoolExecutor(boardRunnables.size(), boardRunnables.size(), 600,
 				TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
@@ -59,8 +59,15 @@ public class Player extends watermelon.sim.Player {
 		for (BoardRunnable r : boardRunnables)
 			threadPoolExecutor.execute(r);
 
-		while (!threadPoolExecutor.isTerminated())
-			; // stay until threads terminate
+		try {
+			threadPoolExecutor.shutdown();
+			while (!threadPoolExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+				System.err.println("Awaiting completion of threads.");
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		BoardRunnable maxRunnable = boardRunnables.get(0);
 		for (BoardRunnable r : boardRunnables)
@@ -70,5 +77,4 @@ public class Player extends watermelon.sim.Player {
 		maxRunnable.getDetails();
 		return maxRunnable.getBoard();
 	}
-
 }

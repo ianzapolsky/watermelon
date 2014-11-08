@@ -55,69 +55,214 @@ public class SeedGraph {
 		}
 	}
 
+	public void shiftRowsAndCols(ArrayList<seed> seedlist) {
+		shiftRows(seedlist);
+
+		shiftRows(seedlist);
+		// shiftCols(seedlist);
+	}
+
+	public void shiftRows(ArrayList<seed> seedlist) {
+		ArrayList<seed> board = (ArrayList<seed>) seedlist.clone();
+		ArrayList<ArrayList<seed>> rows = getRows(board);
+
+		ArrayList<seed> maxBoard = seedlist;
+		double maxScore = calculateScore(seedlist);
+
+		// shift up
+
+		for (ArrayList<seed> row : rows) {
+			boolean scoreIncreasing = true;
+			while (scoreIncreasing) {
+				int movedSeedsCount = 0;
+				for (seed s : row) {
+					s.y -= .1;
+
+					if (!validateSeed(seedlist))
+						s.y += .1;
+					else
+						movedSeedsCount++;
+				}
+				// makes sure that seeds have actually been moved before we
+				// recolor and calculate the score
+				if (movedSeedsCount != 0) {
+					recolorBoard(board);
+					double score = calculateScore(board);
+					if (score > maxScore) {
+						maxScore = score;
+						maxBoard = board;
+					} else if (score < maxScore)
+						scoreIncreasing = false;
+				} else
+					scoreIncreasing = false;
+			}
+		}
+
+		// shift down
+		for (ArrayList<seed> row : rows) {
+			boolean scoreIncreasing = true;
+			while (scoreIncreasing) {
+				int movedSeedsCount = 0;
+				for (seed s : row) {
+					s.y += .1;
+					if (!validateSeed(seedlist))
+						s.y -= .1;
+					else
+						movedSeedsCount++;
+				}
+				// makes sure that seeds have actually been moved before we
+				// recolor and calculate the score
+				if (movedSeedsCount != 0) {
+					recolorBoard(board);
+					double score = calculateScore(board);
+					if (score > maxScore) {
+						maxScore = score;
+						maxBoard = board;
+					} else if (score < maxScore)
+						scoreIncreasing = false;
+				} else
+					scoreIncreasing = false;
+			}
+		}
+
+		seedlist = maxBoard;
+		seedlist = board;
+	}
+
+	public void shiftCols(ArrayList<seed> seedlist) {
+		ArrayList<seed> board = (ArrayList<seed>) seedlist.clone();
+		ArrayList<ArrayList<seed>> cols = getCols(board);
+
+		ArrayList<seed> maxBoard = seedlist;
+		double maxScore = calculateScore(seedlist);
+
+		for (ArrayList<seed> col : cols) {
+			boolean scoreIncreasing = true;
+			while (scoreIncreasing) {
+				int movedSeedsCount = 0;
+				for (seed s : col) {
+					s.x -= 0.1;
+					if (!validateSeed(seedlist))
+						s.x += 0.1;
+					else
+						movedSeedsCount++;
+				}
+				if (movedSeedsCount != 0) {
+					recolorBoard(board);
+					double score = calculateScore(board);
+					if (score > maxScore) {
+						maxScore = score;
+						maxBoard = board;
+					} else if (score < maxScore)
+						scoreIncreasing = false;
+				} else
+					scoreIncreasing = false;
+			}
+		}
+
+		for (ArrayList<seed> col : cols) {
+			boolean scoreIncreasing = true;
+			while (scoreIncreasing) {
+				int movedSeedsCount = 0;
+				for (seed s : col) {
+					s.x += 0.1;
+					if (!validateSeed(seedlist))
+						s.x -= 0.1;
+					else
+						movedSeedsCount++;
+				}
+				if (movedSeedsCount != 0) {
+					recolorBoard(board);
+					double score = calculateScore(board);
+					if (score > maxScore) {
+						maxScore = score;
+						maxBoard = board;
+					} else if (score < maxScore)
+						scoreIncreasing = false;
+				} else
+					scoreIncreasing = false;
+			}
+		}
+		seedlist = maxBoard;
+	}
+
+	public ArrayList<ArrayList<seed>> getRows(ArrayList<seed> seedlist) {
+		ArrayList<ArrayList<seed>> rows = new ArrayList<ArrayList<seed>>();
+		rows.add(getRow(seedlist, seedlist.get(0)));
+		for (seed s : seedlist) {
+			boolean hasRow = false;
+			for (int j = 0; j < rows.size(); j++) {
+				if (Math.abs(rows.get(j).get(0).y - s.y) < distoseed / 2) {
+					hasRow = true;
+					rows.get(j).add(s);
+					continue;
+				}
+			}
+			if (hasRow == false)
+				rows.add(getRow(seedlist, s));
+		}
+		return rows;
+	}
+
+	public ArrayList<ArrayList<seed>> getCols(ArrayList<seed> seedlist) {
+		ArrayList<ArrayList<seed>> cols = new ArrayList<ArrayList<seed>>();
+		cols.add(getCol(seedlist, seedlist.get(0)));
+		for (seed s : seedlist) {
+			boolean hasCol = false;
+			for (int j = 0; j < cols.size(); j++) {
+				if (Math.abs(cols.get(j).get(0).y - s.y) < distoseed / 2) {
+					hasCol = true;
+					cols.get(j).add(s);
+					continue;
+				}
+			}
+			if (hasCol == false)
+				cols.add(getRow(seedlist, s));
+		}
+		return cols;
+	}
+
+	public ArrayList<seed> getRow(ArrayList<seed> seedlist, seed seedInit) {
+		ArrayList<seed> row = new ArrayList<seed>();
+		for (seed s : seedlist)
+			if (Math.abs(seedInit.y - s.y) < distoseed / 2)
+				row.add(s);
+		return row;
+	}
+
+	public ArrayList<seed> getCol(ArrayList<seed> seedlist, seed seedInit) {
+		ArrayList<seed> row = new ArrayList<seed>();
+		for (seed s : seedlist)
+			if (Math.abs(seedInit.x - s.x) < distoseed / 2)
+				row.add(s);
+		return row;
+	}
+
 	public void jiggleBoard(ArrayList<seed> seedlist) {
-		for (int j = 0; j < 10; j++) {
-			for (int i = 0; i < seedlist.size(); i++) {
-				double origScore = calculateScore(seedlist);
-				seed origSeed = seedlist.get(i);
+		for (seed s : seedlist) {
+			double origScore = calculateScore(seedlist);
 
-				double maxScore = origScore;
-				seed maxSeed = new seed(origSeed.x, origSeed.y, origSeed.tetraploid);
+			double maxScore = origScore;
 
-				// jiggling x
-				seed newSeed1 = new seed(maxSeed.x + .1, maxSeed.y, maxSeed.tetraploid);
-				if (validateSeed(newSeed1, seedlist)) {
-					seedlist.set(i, newSeed1);
-					double diffScore1 = calculateScore(seedlist);
-
-					if (diffScore1 > maxScore) {
-						maxSeed = newSeed1;
-						maxScore = diffScore1;
-					} else
-						// set back to original
-						seedlist.set(i, maxSeed);
+			// jiggling x in + direction
+			boolean increasingScore = true;
+			while (increasingScore) {
+				s.x += 0.1;
+				if (!validateSeed(seedlist) && calculateScore(seedlist) < maxScore) {
+					s.x -= 0.1;
+					continue;
 				}
+				increasingScore = false;
+			}
 
-				seed newSeed2 = new seed(maxSeed.x - .1, maxSeed.y, maxSeed.tetraploid);
-				if (validateSeed(newSeed2, seedlist)) {
-					seedlist.set(i, newSeed2);
-					double diffScore2 = calculateScore(seedlist);
-
-					if (diffScore2 > maxScore) {
-						maxSeed = newSeed2;
-						maxScore = diffScore2;
-					} else
-						// set back to original
-						seedlist.set(i, maxSeed);
-				}
-
-				// jiggling y
-
-				seed newSeed3 = new seed(maxSeed.x, maxSeed.y + .1, maxSeed.tetraploid);
-				if (validateSeed(newSeed3, seedlist)) {
-					seedlist.set(i, newSeed3);
-					double diffScore3 = calculateScore(seedlist);
-
-					if (diffScore3 > maxScore) {
-						maxSeed = newSeed3;
-						maxScore = diffScore3;
-					} else
-						// set back to original
-						seedlist.set(i, maxSeed);
-				}
-
-				seed newSeed4 = new seed(maxSeed.x, maxSeed.y - .1, maxSeed.tetraploid);
-				if (validateSeed(newSeed4, seedlist)) {
-					seedlist.set(i, newSeed4);
-					double diffScore4 = calculateScore(seedlist);
-
-					if (diffScore4 > maxScore) {
-						maxSeed = newSeed4;
-						maxScore = diffScore4;
-					} else
-						// set back to original
-						seedlist.set(i, maxSeed);
-				}
+			// jiggling x in - direction
+			increasingScore = true;
+			while (increasingScore) {
+				s.x += 0.1;
+				if (!validateSeed(seedlist))
+					s.x -= 0.1;
+				else
+					increasingScore = false;
 			}
 		}
 
@@ -175,25 +320,34 @@ public class SeedGraph {
 		return true;
 	}
 
-	public boolean validateSeed(seed tmpSeed, ArrayList<seed> tmplist) {
+	public boolean validateSeed(ArrayList<seed> seedlist) {
+		int nseeds = seedlist.size();
 
-		for (int i = 0; i < tmplist.size(); i++) {
-			if (distance(tmpSeed, tmplist.get(i)) < distoseed) {
+		for (int i = 0; i < nseeds; i++) {
+			for (int j = i + 1; j < nseeds; j++) {
+				if (distance(seedlist.get(i), seedlist.get(j)) < distoseed) {
+					return false;
+				}
+			}
+		}
+		for (int i = 0; i < nseeds; i++) {
+			if (seedlist.get(i).x < 0 || seedlist.get(i).x > width || seedlist.get(i).y < 0
+					|| seedlist.get(i).y > length) {
+				return false;
+			}
+			if (seedlist.get(i).x < distowall || width - seedlist.get(i).x < distowall || seedlist.get(i).y < distowall
+					|| length - seedlist.get(i).y < distowall) {
 				return false;
 			}
 		}
-		for (Pair p : treelist) {
-			if (distance(tmpSeed, p) < distotree) {
-				return false;
-			}
-			if (tmpSeed.x + 1.00 > width || tmpSeed.x - 1.00 < 0) {
-				return false;
-			}
-			if (tmpSeed.y + 1.00 > length || tmpSeed.y - 1.00 < 0) {
-				return false;
+		for (int i = 0; i < treelist.size(); i++) {
+			for (int j = 0; j < nseeds; j++) {
+				if (distance(seedlist.get(j), treelist.get(i)) < distotree) {
+					return false;
+				}
 			}
 		}
-
 		return true;
 	}
+
 }
