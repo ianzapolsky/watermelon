@@ -11,7 +11,6 @@ public class SeedGraph {
 	static double distowall = 1.00;
 	static double distotree = 2.00;
 	static double distoseed = 2.00;
-	static double epsilon = .000001;
 
 	double width;
 	double length;
@@ -41,17 +40,26 @@ public class SeedGraph {
 		return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 	}
 
+  // optimized recolor board to stop if no improvement is seen
 	public void recolorBoard(ArrayList<seed> seedlist) {
-		for (int j = 0; j < 3; j++) {
+    double origScore = calculateScore(seedlist);
+    double currentScore;
+		for (int j = 0; j < 5; j++) {
+      currentScore = origScore;
 			for (int i = 0; i < seedlist.size(); i++) {
-				double origScore = calculateScore(seedlist);
 				// change the type to calculate the score
 				seedlist.get(i).tetraploid = !seedlist.get(i).tetraploid;
 				double diffScore = calculateScore(seedlist);
 				// if the original score was better, change it back
-				if (origScore > diffScore)
+				if (currentScore > diffScore)
 					seedlist.get(i).tetraploid = !seedlist.get(i).tetraploid;
+        else
+          currentScore = diffScore;
 			}
+      if (currentScore <= origScore)
+        break;
+      else
+        origScore = currentScore;
 		}
 	}
 
@@ -120,8 +128,42 @@ public class SeedGraph {
 				}
 			}
 		}
-
 	}
+
+  public int countRows(ArrayList<seed> tmplist) {
+    int rows = 0;
+    for (seed s : tmplist) {
+      if (s.x <= 2.00)
+        rows++;
+    }
+    return rows;
+  }
+
+  public void spaceEdgeRow(ArrayList<seed> tmplist) {
+    // determine spacing direction    
+    System.out.println(tmplist.get(0).y);
+    if (tmplist.get(0).y > 1.00) {
+      int i = tmplist.size() - 1;
+      double rowY = tmplist.get(i).y;
+      do {
+        seed s = tmplist.get(i--);
+        double tempY = s.y;
+        s.y = 1.00;
+        if (!validateSeed(s))
+          s.y = tempY;
+      } while (tmplist.get(i).y == rowY);
+    } else {
+      int i = tmplist.size() - 1;
+      double rowY = tmplist.get(i).y;
+      do {
+        seed s = tmplist.get(i--);
+        double tempY = s.y;
+        s.y = length - 1.00;
+        if (!validateSeed(s))
+          s.y = tempY;
+      } while (tmplist.get(i).y == rowY);
+    }
+  }
 
 	public double calculateScore(ArrayList<seed> seedlist) {
 		double total = 0.0;
@@ -147,16 +189,6 @@ public class SeedGraph {
 			total = total + score;
 		}
 		return total;
-	}
-
-	// get the hexagonal x offset
-	public double getHexagonalOffsetX() {
-		return distoseed * Math.sin(Math.PI / 6.0);
-	}
-
-	// get the hexagonal y offset
-	public double getHexagonalOffsetY() {
-		return distoseed * Math.cos(Math.PI / 6.0);
 	}
 
 	public boolean validateSeed(seed tmpSeed) {
@@ -196,4 +228,5 @@ public class SeedGraph {
 
 		return true;
 	}
+
 }

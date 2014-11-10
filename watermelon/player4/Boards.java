@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import watermelon.sim.seed;
 
-public class Boards extends Thread {
+public class Boards {
 	static double distowall = 1.00;
 	static double distotree = 2.00;
 	static double distoseed = 2.00;
@@ -16,6 +16,32 @@ public class Boards extends Thread {
 		seedgraph = initSeedGraph;
 	}
 
+	// get the hexagonal x offset
+	public double getHexagonalOffsetX() {
+		return distoseed * Math.sin(Math.PI / 6.0);
+	}
+
+	// get the hexagonal y offset
+	public double getHexagonalOffsetY() {
+		return distoseed * Math.cos(Math.PI / 6.0);
+	}
+
+  // recolor and jiggle the board 5 times, stopping if no improvement is seen
+  public void recolorJiggleSmart(ArrayList<seed> tmplist) {
+    double currentScore = seedgraph.calculateScore(tmplist);
+    for (int i = 0; i < 5; i++) {
+			seedgraph.recolorBoard(tmplist);
+			seedgraph.jiggleBoard(tmplist);
+      double improvedScore = seedgraph.calculateScore(tmplist);
+      if (improvedScore <= currentScore)
+        break;
+      else
+        currentScore = improvedScore;
+    }
+    // space the edge row
+    seedgraph.spaceEdgeRow(tmplist);
+  }
+
 	// North West
 	public ArrayList<seed> getHexagonalNWBoard() {
 
@@ -23,14 +49,14 @@ public class Boards extends Thread {
 		int seedType = 1;
 		boolean shift = false;
 		boolean alternateRow = true;
-		for (double j = distowall; j <= seedgraph.length - distowall; j = j + seedgraph.getHexagonalOffsetY() + epsilon) {
+		for (double j = distowall; j <= seedgraph.length - distowall; j = j + getHexagonalOffsetY() + epsilon) {
 			if (!alternateRow)
 				seedType *= -1;
 			alternateRow = !alternateRow;
 			for (double i = distowall; i <= seedgraph.width - distowall; i = i + distoseed) {
 				seed tmp = new seed(i, j, false);
 				if (shift) {
-					tmp.x += seedgraph.getHexagonalOffsetX();
+					tmp.x += getHexagonalOffsetX();
 				}
 				if (seedType == 1) {
 					tmp.tetraploid = true;
@@ -42,10 +68,7 @@ public class Boards extends Thread {
 			seedType = 1;
 			shift = !shift;
 		}
-		for (int k = 0; k < 5; k++) {
-			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
-		}
+    recolorJiggleSmart(tmplist);
 		return tmplist;
 	}
 
@@ -56,14 +79,14 @@ public class Boards extends Thread {
 		int seedType = 1;
 		boolean shift = false;
 		boolean alternateRow = true;
-		for (double j = distowall; j <= seedgraph.length - distowall; j = j + seedgraph.getHexagonalOffsetY() + epsilon) {
+		for (double j = distowall; j <= seedgraph.length - distowall; j = j + getHexagonalOffsetY() + epsilon) {
 			if (!alternateRow)
 				seedType *= -1;
 			alternateRow = !alternateRow;
 			for (double i = seedgraph.width - distowall; i >= distowall; i = i - distoseed) {
 				seed tmp = new seed(i, j, false);
 				if (shift) {
-					tmp.x -= seedgraph.getHexagonalOffsetX();
+					tmp.x -= getHexagonalOffsetX();
 				}
 				if (seedType == 1) {
 					tmp.tetraploid = true;
@@ -75,10 +98,7 @@ public class Boards extends Thread {
 			seedType = 1;
 			shift = !shift;
 		}
-		for (int k = 0; k < 5; k++) {
-			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
-		}
+    recolorJiggleSmart(tmplist);
 		return tmplist;
 	}
 
@@ -89,14 +109,14 @@ public class Boards extends Thread {
 		int seedType = 1;
 		boolean shift = false;
 		boolean alternateRow = true;
-		for (double j = seedgraph.length - distowall; j >= distowall; j = j - seedgraph.getHexagonalOffsetY() - epsilon) {
+		for (double j = seedgraph.length - distowall; j >= distowall; j = j - getHexagonalOffsetY() - epsilon) {
 			if (!alternateRow)
 				seedType *= -1;
 			alternateRow = !alternateRow;
 			for (double i = distowall; i <= seedgraph.width - distowall; i = i + distoseed) {
 				seed tmp = new seed(i, j, false);
 				if (shift) {
-					tmp.x += seedgraph.getHexagonalOffsetX();
+					tmp.x += getHexagonalOffsetX();
 				}
 				if (seedType == 1) {
 					tmp.tetraploid = true;
@@ -108,10 +128,7 @@ public class Boards extends Thread {
 			seedType = 1;
 			shift = !shift;
 		}
-		for (int k = 0; k < 5; k++) {
-			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
-		}
+    recolorJiggleSmart(tmplist);
 		return tmplist;
 	}
 
@@ -122,14 +139,14 @@ public class Boards extends Thread {
 		int seedType = 1;
 		boolean shift = false;
 		boolean alternateRow = true;
-		for (double j = seedgraph.length - distowall; j >= distowall; j = j - seedgraph.getHexagonalOffsetY() - epsilon) {
+		for (double j = seedgraph.length - distowall; j >= distowall; j = j - getHexagonalOffsetY() - epsilon) {
 			if (!alternateRow)
 				seedType *= -1;
 			alternateRow = !alternateRow;
 			for (double i = seedgraph.width - distowall; i >= distowall; i = i - distoseed) {
 				seed tmp = new seed(i, j, false);
 				if (shift) {
-					tmp.x -= seedgraph.getHexagonalOffsetX();
+					tmp.x -= getHexagonalOffsetX();
 				}
 				if (seedType == 1) {
 					tmp.tetraploid = true;
@@ -141,10 +158,7 @@ public class Boards extends Thread {
 			seedType = 1;
 			shift = !shift;
 		}
-		for (int k = 0; k < 5; k++) {
-			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
-		}
+    recolorJiggleSmart(tmplist);
 		return tmplist;
 	}
 

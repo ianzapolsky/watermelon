@@ -2,8 +2,8 @@ package watermelon.player4;
 
 import java.util.ArrayList;
 
-import watermelon.player4threaded.Boards;
-import watermelon.player4threaded.SeedGraph;
+import watermelon.player4.Boards;
+import watermelon.player4.SeedGraph;
 import watermelon.sim.Pair;
 import watermelon.sim.seed;
 
@@ -12,7 +12,6 @@ public class Player extends watermelon.sim.Player {
 	static double distowall = 1.00;
 	static double distotree = 2.00;
 	static double distoseed = 2.00;
-	static double epsilon = .0000001;
 
 	double width;
 	double length;
@@ -40,38 +39,35 @@ public class Player extends watermelon.sim.Player {
 		seedgraph = new SeedGraph(initTreelist, initWidth, initLength, initS);
 		boards = new Boards(seedgraph);
 
-		ArrayList<seed> hexAlternatingNW = boards.getHexagonalNWBoard();
-		ArrayList<seed> hexAlternatingNE = boards.getHexagonalNEBoard();
-		ArrayList<seed> hexAlternatingSW = boards.getHexagonalSWBoard();
-		ArrayList<seed> hexAlternatingSE = boards.getHexagonalSEBoard();
+		ArrayList<seed> hexAlternatingNW  = boards.getHexagonalNWBoard();
+		ArrayList<seed> hexAlternatingNE  = boards.getHexagonalNEBoard();
+		ArrayList<seed> hexAlternatingSW  = boards.getHexagonalSWBoard();
+		ArrayList<seed> hexAlternatingSE  = boards.getHexagonalSEBoard();
 		ArrayList<seed> gridAlternatingNW = boards.getAlternatingNWBoard();
 		ArrayList<seed> gridAlternatingNE = boards.getAlternatingNEBoard();
 		ArrayList<seed> gridAlternatingSW = boards.getAlternatingSWBoard();
 		ArrayList<seed> gridAlternatingSE = boards.getAlternatingSEBoard();
 
-		double scoreHexAlternatingNW = seedgraph.calculateScore(hexAlternatingNW);
-		double scoreHexAlternatingNE = seedgraph.calculateScore(hexAlternatingNE);
-		double scoreHexAlternatingSW = seedgraph.calculateScore(hexAlternatingSW);
-		double scoreHexAlternatingSE = seedgraph.calculateScore(hexAlternatingSE);
+		double scoreHexAlternatingNW  = seedgraph.calculateScore(hexAlternatingNW);
+		double scoreHexAlternatingNE  = seedgraph.calculateScore(hexAlternatingNE);
+		double scoreHexAlternatingSW  = seedgraph.calculateScore(hexAlternatingSW);
+		double scoreHexAlternatingSE  = seedgraph.calculateScore(hexAlternatingSE);
 		double scoreGridAlternatingNW = seedgraph.calculateScore(gridAlternatingNW);
 		double scoreGridAlternatingNE = seedgraph.calculateScore(gridAlternatingNE);
 		double scoreGridAlternatingSW = seedgraph.calculateScore(gridAlternatingSW);
 		double scoreGridAlternatingSE = seedgraph.calculateScore(gridAlternatingSE);
 
-		double maxScore = 0;
-		if (scoreHexAlternatingNW > scoreGridAlternatingNW) {
+		double maxScore = Double.MIN_VALUE;
+
+    // check alternating scores
+		if (scoreHexAlternatingNW > maxScore) {
 			seedlist = hexAlternatingNW;
 			maxScore = scoreHexAlternatingNW;
-		} else {
-			seedlist = gridAlternatingNW;
-			maxScore = scoreGridAlternatingNW;
-		}
-
+		} 
 		if (scoreHexAlternatingNE > maxScore) {
 			seedlist = hexAlternatingNE;
 			maxScore = scoreHexAlternatingNE;
 		}
-
 		if (scoreHexAlternatingSW > maxScore) {
 			seedlist = hexAlternatingSW;
 			maxScore = scoreHexAlternatingSW;
@@ -79,6 +75,12 @@ public class Player extends watermelon.sim.Player {
 		if (scoreHexAlternatingSE > maxScore) {
 			seedlist = hexAlternatingSE;
 			maxScore = scoreHexAlternatingSE;
+		}
+
+    // check grid scores
+    if (scoreGridAlternatingNW > maxScore) {
+			seedlist = gridAlternatingNW;
+			maxScore = scoreGridAlternatingNW;
 		}
 		if (scoreGridAlternatingNE > maxScore) {
 			seedlist = gridAlternatingNE;
