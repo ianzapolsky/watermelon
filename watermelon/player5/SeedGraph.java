@@ -49,37 +49,58 @@ public class SeedGraph {
 		}
 	}
 
-  public void jiggleBoard(ArrayList<seed> seedlist) {
+  private void jiggleSeed(ArrayList<seed> seedlist, int seedIndex) {
+    seed s = seedlist.get(seedIndex);
+    double angleGranularity = 1;
+    double locationGranularity = 0.01;
     double origScore = calculateScore(seedlist);
-    double currentScore; 
-    while (true) {
-      currentScore = origScore;
-      for (int i = 0; i < seedlist.size(); i++) {
-        // check for jiggling eligibility
-        if (getAdjacentSeeds(seedlist, i).size() < 6) {
-          seed s = seedlist.get(i);
-          double x = .1;
-          double y = .1;
-          s.x += x;
-          s.y += y;
-          double diffScore = calculateScore(seedlist);
-          if (!validateSeed(s, seedlist) || currentScore > diffScore) {
-            s.x -= x;
-            s.y -= y;
-          } else {
-            System.out.println("jiggle applied to seed " + i);
-            currentScore = diffScore;
-          }
+    double bestScore = origScore;
+    double origX = s.x;
+    double origY = s.y;
+    double bestX = s.x;
+    double bestY = s.y;
+
+    for (double angle = 0; angle < 360; angle += angleGranularity) {
+      s.x = origX;
+      s.y = origY;
+      double score;
+      double x = Math.cos(Math.toRadians(angle)) * locationGranularity;
+      double y = Math.sin(Math.toRadians(angle)) * locationGranularity;
+      while (true) {
+        s.x += x;
+        s.y += y;
+        if (!validateSeed(s, seedlist))
+          break; 
+        score = calculateScore(seedlist);
+        if (score > bestScore) {
+          bestScore = score;
+          bestX = s.x;
+          bestY = s.y;
         }
       }
-      if (currentScore <= origScore)
-        break;
-      else
-        origScore = currentScore;
-    }
+    } 
+    s.x = bestX;
+    s.y = bestY;
   }
 
-    // count the number of rows of seeds on our board
+	public void jiggleAllSeeds(ArrayList<seed> seedlist) {
+		int i = 0;
+		int maxIterations = 100;
+    double currentScore = calculateScore(seedlist);
+    while (i++ < maxIterations) {
+			for (int j = 0; j < seedlist.size(); j++) {
+        if (getAdjacentSeeds(seedlist, j).size() < 6)
+				  jiggleSeed(seedlist, j);
+      }
+      double diffScore = calculateScore(seedlist);
+      if (diffScore > currentScore)
+        currentScore = diffScore;
+      else
+        break;
+    }
+	}
+
+  // count the number of rows of seeds on our board
   public int countRows(ArrayList<seed> tmplist) {
     int rows = 0;
     for (seed s : tmplist) {
@@ -145,6 +166,9 @@ public class SeedGraph {
 			double difdis = 0.0;
 			for (int j = 0; j < seedlist.size(); j++) {
 				if (j != i) {
+          // added validation check for seed closeness
+          //if (distance(seedlist.get(i), seedlist.get(j)) < distoseed)
+          //  return 0.0;
 					totaldis = totaldis + Math.pow(distance(seedlist.get(i), seedlist.get(j)), -2);
 				}
 			}
@@ -161,7 +185,7 @@ public class SeedGraph {
 		}
 		return total;
 	}
-
+	
 	public boolean validateSeed(seed tmpSeed) {
 		for (Pair p : treelist) {
 			if (distance(tmpSeed, p) < distotree) {
@@ -174,14 +198,13 @@ public class SeedGraph {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
 	public boolean validateSeed(seed tmpSeed, ArrayList<seed> tmplist) {
 
-		for (int i = 0; i < tmplist.size(); i++) {
-			if (distance(tmpSeed, tmplist.get(i)) < distoseed) {
+		for (seed s : tmplist) {
+			if (s != tmpSeed && distance(tmpSeed, s) < distoseed) {
 				return false;
 			}
 		}
@@ -196,7 +219,6 @@ public class SeedGraph {
 				return false;
 			}
 		}
-
 		return true;
 	}
 

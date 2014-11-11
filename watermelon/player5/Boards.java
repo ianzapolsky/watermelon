@@ -31,7 +31,7 @@ public class Boards {
     double currentScore = seedgraph.calculateScore(tmplist);
     while (true) {
 			seedgraph.recolorBoard(tmplist);
-			seedgraph.jiggleBoard(tmplist);
+			seedgraph.jiggleAllSeeds(tmplist);
       double improvedScore = seedgraph.calculateScore(tmplist);
       if (improvedScore <= currentScore)
         break;
