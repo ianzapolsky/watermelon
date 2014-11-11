@@ -100,16 +100,18 @@ public class SeedGraph {
     }
 	}
 
-  // count the number of rows of seeds on our board
-  public int countRows(ArrayList<seed> tmplist) {
-    int rows = 0;
-    for (seed s : tmplist) {
-      if (s.x <= 2.00)
-        rows++;
+  // scan the board with a small granularity, check if a seed can be inserted
+  public void scanAndInsert(ArrayList<seed> tmplist) {
+    for (double i = distowall; i <= width - distowall; i += .01) {
+      for (double j = distowall; j <= length - distowall; j += .01) {
+        seed s = new seed(i, j, true);
+        if (validateSeed(s, tmplist))
+          tmplist.add(s); 
+      }
     }
-    return rows;
   }
 
+  // THIS METHOD CONTAINS A BUG. DO NOT USE.
   // move the bottom or top row to the edge of the field
   public void spaceEdgeRow(ArrayList<seed> tmplist) {
     // determine spacing direction    
@@ -158,6 +160,8 @@ public class SeedGraph {
   }
 
 	public double calculateScore(ArrayList<seed> seedlist) {
+    if (seedlist.size() == 1)
+      return s;
 		double total = 0.0;
 		for (int i = 0; i < seedlist.size(); i++) {
 			double score = 0.0;
@@ -166,9 +170,6 @@ public class SeedGraph {
 			double difdis = 0.0;
 			for (int j = 0; j < seedlist.size(); j++) {
 				if (j != i) {
-          // added validation check for seed closeness
-          //if (distance(seedlist.get(i), seedlist.get(j)) < distoseed)
-          //  return 0.0;
 					totaldis = totaldis + Math.pow(distance(seedlist.get(i), seedlist.get(j)), -2);
 				}
 			}

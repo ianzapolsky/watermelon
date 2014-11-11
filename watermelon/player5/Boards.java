@@ -30,6 +30,7 @@ public class Boards {
   public void recolorJiggleSmart(ArrayList<seed> tmplist) {
     double currentScore = seedgraph.calculateScore(tmplist);
     while (true) {
+      seedgraph.scanAndInsert(tmplist);
 			seedgraph.recolorBoard(tmplist);
 			seedgraph.jiggleAllSeeds(tmplist);
       double improvedScore = seedgraph.calculateScore(tmplist);
@@ -38,24 +39,6 @@ public class Boards {
       else
         currentScore = improvedScore;
     }
-    // space the edge row
-    ArrayList<seed> spacedList = tmplist;
-    seedgraph.spaceEdgeRow(spacedList);
-    if (seedgraph.calculateScore(spacedList) > currentScore) {
-      seedgraph.spaceEdgeRow(tmplist);
-    }
-  }
-
-  public void scanAndInsert(ArrayList<seed> tmplist) {
-    System.out.println(tmplist.size());
-    for (double i = distowall; i <= seedgraph.width - distowall; i += .01) {
-      for (double j = distowall; j <= seedgraph.length - distowall; j += .01) {
-        seed s = new seed(i, j, true);
-        if (seedgraph.validateSeed(s, tmplist))
-          tmplist.add(s); 
-      }
-    }
-    System.out.println(tmplist.size());
   }
 
 	// North West
@@ -84,7 +67,6 @@ public class Boards {
 			seedType = 1;
 			shift = !shift;
 		}
-    scanAndInsert(tmplist);
     recolorJiggleSmart(tmplist);
 		return tmplist;
 	}
@@ -115,7 +97,6 @@ public class Boards {
 			seedType = 1;
 			shift = !shift;
 		}
-    scanAndInsert(tmplist);
     recolorJiggleSmart(tmplist);
 		return tmplist;
 	}
@@ -146,7 +127,6 @@ public class Boards {
 			seedType = 1;
 			shift = !shift;
 		}
-    scanAndInsert(tmplist);
     recolorJiggleSmart(tmplist);
 		return tmplist;
 	}
@@ -177,7 +157,6 @@ public class Boards {
 			seedType = 1;
 			shift = !shift;
 		}
-    scanAndInsert(tmplist);
     recolorJiggleSmart(tmplist);
 		return tmplist;
 	}

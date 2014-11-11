@@ -1,5 +1,7 @@
 package watermelon.group1;
 
+import java.util.*;
+
 public class Location {
     public double x;
     public double y;
@@ -12,6 +14,24 @@ public class Location {
     public Location(Location location) {
     	this.x = location.x;
     	this.y = location.y;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+
+        if (!(o instanceof Location))
+            return false;
+         
+        Location l = (Location) o;
+             	
+    	return x == l.x && y == l.y;
+    }
+    
+    @Override
+    public String toString() {
+    	return "(" + Double.toString(x) + " " + Double.toString(y) + ")";
     }
     
     static public double distanceSquared(double x1, double y1, double x2, double y2) {
@@ -40,5 +60,14 @@ public class Location {
     
     static public boolean equals(Location l1, Location l2) {
     	return l1.x == l2.x && l1.y == l2.y;
+    }
+    
+    static public boolean nearAny(Location target, ArrayList<Location> locations, double d) {
+    	for (Location location : locations) {
+    		if (distance(target, location) < d)
+    			return true;
+    	}
+    	
+    	return false;
     }
 }

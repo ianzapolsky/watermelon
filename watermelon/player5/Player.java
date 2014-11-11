@@ -40,63 +40,60 @@ public class Player extends watermelon.sim.Player {
 		boards = new Boards(seedgraph);
 
 		ArrayList<seed> hexAlternatingNW  = boards.getHexagonalNWBoard();
-		//ArrayList<seed> hexAlternatingNE  = boards.getHexagonalNEBoard();
-		//ArrayList<seed> hexAlternatingSW  = boards.getHexagonalSWBoard();
-		//ArrayList<seed> hexAlternatingSE  = boards.getHexagonalSEBoard();
-		//ArrayList<seed> gridAlternatingNW = boards.getAlternatingNWBoard();
-		//ArrayList<seed> gridAlternatingNE = boards.getAlternatingNEBoard();
-		//ArrayList<seed> gridAlternatingSW = boards.getAlternatingSWBoard();
-		//ArrayList<seed> gridAlternatingSE = boards.getAlternatingSEBoard();
+		ArrayList<seed> hexAlternatingNE  = boards.getHexagonalNEBoard();
+		ArrayList<seed> hexAlternatingSW  = boards.getHexagonalSWBoard();
+		ArrayList<seed> hexAlternatingSE  = boards.getHexagonalSEBoard();
+		ArrayList<seed> gridAlternatingNW = boards.getAlternatingNWBoard();
+		ArrayList<seed> gridAlternatingNE = boards.getAlternatingNEBoard();
+		ArrayList<seed> gridAlternatingSW = boards.getAlternatingSWBoard();
+		ArrayList<seed> gridAlternatingSE = boards.getAlternatingSEBoard();
 
-    seedlist = hexAlternatingNW;
-    double maxScore = seedgraph.calculateScore(seedlist);
+		double scoreHexAlternatingNW  = seedgraph.calculateScore(hexAlternatingNW);
+		double scoreHexAlternatingNE  = seedgraph.calculateScore(hexAlternatingNE);
+		double scoreHexAlternatingSW  = seedgraph.calculateScore(hexAlternatingSW);
+		double scoreHexAlternatingSE  = seedgraph.calculateScore(hexAlternatingSE);
+		double scoreGridAlternatingNW = seedgraph.calculateScore(gridAlternatingNW);
+		double scoreGridAlternatingNE = seedgraph.calculateScore(gridAlternatingNE);
+		double scoreGridAlternatingSW = seedgraph.calculateScore(gridAlternatingSW);
+		double scoreGridAlternatingSE = seedgraph.calculateScore(gridAlternatingSE);
 
-		//double scoreHexAlternatingNW  = seedgraph.calculateScore(hexAlternatingNW);
-		//double scoreHexAlternatingNE  = seedgraph.calculateScore(hexAlternatingNE);
-		//double scoreHexAlternatingSW  = seedgraph.calculateScore(hexAlternatingSW);
-		//double scoreHexAlternatingSE  = seedgraph.calculateScore(hexAlternatingSE);
-		//double scoreGridAlternatingNW = seedgraph.calculateScore(gridAlternatingNW);
-		//double scoreGridAlternatingNE = seedgraph.calculateScore(gridAlternatingNE);
-		//double scoreGridAlternatingSW = seedgraph.calculateScore(gridAlternatingSW);
-		//double scoreGridAlternatingSE = seedgraph.calculateScore(gridAlternatingSE);
+		double maxScore = Double.MIN_VALUE;
 
-		//double maxScore = Double.MIN_VALUE;
+    // check alternating scores
+		if (scoreHexAlternatingNW > maxScore) {
+			seedlist = hexAlternatingNW;
+			maxScore = scoreHexAlternatingNW;
+		} 
+		if (scoreHexAlternatingNE > maxScore) {
+			seedlist = hexAlternatingNE;
+			maxScore = scoreHexAlternatingNE;
+		}
+		if (scoreHexAlternatingSW > maxScore) {
+			seedlist = hexAlternatingSW;
+			maxScore = scoreHexAlternatingSW;
+		}
+		if (scoreHexAlternatingSE > maxScore) {
+			seedlist = hexAlternatingSE;
+			maxScore = scoreHexAlternatingSE;
+		}
 
-    //// check alternating scores
-		//if (scoreHexAlternatingNW > maxScore) {
-		//	seedlist = hexAlternatingNW;
-		//	maxScore = scoreHexAlternatingNW;
-		//} 
-		//if (scoreHexAlternatingNE > maxScore) {
-		//	seedlist = hexAlternatingNE;
-		//	maxScore = scoreHexAlternatingNE;
-		//}
-		//if (scoreHexAlternatingSW > maxScore) {
-		//	seedlist = hexAlternatingSW;
-		//	maxScore = scoreHexAlternatingSW;
-		//}
-		//if (scoreHexAlternatingSE > maxScore) {
-		//	seedlist = hexAlternatingSE;
-		//	maxScore = scoreHexAlternatingSE;
-		//}
-
-    //// check grid scores
-    //if (scoreGridAlternatingNW > maxScore) {
-		//	seedlist = gridAlternatingNW;
-		//	maxScore = scoreGridAlternatingNW;
-		//}
-		//if (scoreGridAlternatingNE > maxScore) {
-		//	seedlist = gridAlternatingNE;
-		//	maxScore = scoreGridAlternatingNE;
-		//}
-		//if (scoreGridAlternatingSW > maxScore) {
-		//	seedlist = gridAlternatingSW;
-		//	maxScore = scoreGridAlternatingSW;
-		//}
-		//if (scoreGridAlternatingSE > maxScore) {
-		//	seedlist = gridAlternatingSE;
-		//	maxScore = scoreGridAlternatingSE;
-		//}
+    // check grid scores
+    if (scoreGridAlternatingNW > maxScore) {
+			seedlist = gridAlternatingNW;
+			maxScore = scoreGridAlternatingNW;
+		}
+		if (scoreGridAlternatingNE > maxScore) {
+			seedlist = gridAlternatingNE;
+			maxScore = scoreGridAlternatingNE;
+		}
+		if (scoreGridAlternatingSW > maxScore) {
+			seedlist = gridAlternatingSW;
+			maxScore = scoreGridAlternatingSW;
+		}
+		if (scoreGridAlternatingSE > maxScore) {
+			seedlist = gridAlternatingSE;
+			maxScore = scoreGridAlternatingSE;
+		}
 
 		System.out.println("maxScore = " + maxScore);
 		System.out.printf("seedlist size is %d\n", seedlist.size());
