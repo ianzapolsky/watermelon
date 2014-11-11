@@ -100,6 +100,61 @@ public class SeedGraph {
     }
 	}
 
+  public void jiggleSeedTowardTree(ArrayList<seed> seedlist, int seedIndex) {
+    seed s = seedlist.get(seedIndex);
+
+    if (treelist.size() == 0)
+      return;
+    Pair nearestTree = treelist.get(0);
+    for (Pair p : treelist) {
+      if (distance(p, s) < distance(nearestTree, s))
+        nearestTree = p; 
+    }
+
+    double dist = distance(nearestTree, s);
+    double bestDist = dist;
+    double angleGranularity = 1;
+    double locationGranularity = 0.01;
+    double origX = s.x;
+    double origY = s.y;
+    double bestX = s.x;
+    double bestY = s.y;
+
+    for (double angle = 0; angle < 360; angle += angleGranularity) {
+      s.x = origX;
+      s.y = origY;
+      double score;
+      double x = Math.cos(Math.toRadians(angle)) * locationGranularity;
+      double y = Math.sin(Math.toRadians(angle)) * locationGranularity;
+      while (true) {
+        s.x += x;
+        s.y += y;
+        if (!validateSeed(s, seedlist))
+          break; 
+        double newDist = distance(nearestTree, s);
+        if (newDist < dist) {
+          bestDist = newDist;
+          bestX = s.x;
+          bestY = s.y;
+        }
+      }
+    } 
+    s.x = bestX;
+    s.y = bestY;
+  }
+
+  public void jiggleAllSeedsTowardTree(ArrayList<seed> seedlist) {
+		int i = 0;
+		int maxIterations = 100;
+    double currentScore = calculateScore(seedlist);
+    while (i++ < maxIterations) {
+			for (int j = 0; j < seedlist.size(); j++) {
+        if (getAdjacentSeeds(seedlist, j).size() < 6)
+				  jiggleSeedTowardTree(seedlist, j);
+      }
+    }
+  }
+
   // scan the board with a small granularity, check if a seed can be inserted
   public void scanAndInsert(ArrayList<seed> tmplist) {
     for (double i = distowall; i <= width - distowall; i += .01) {
@@ -225,6 +280,9 @@ public class SeedGraph {
 
 	// distance between seed and pair
 	public double distance(seed tmp, Pair pair) {
+		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y) * (tmp.y - pair.y));
+	}
+  public double distance(Pair pair, seed tmp) {
 		return Math.sqrt((tmp.x - pair.x) * (tmp.x - pair.x) + (tmp.y - pair.y) * (tmp.y - pair.y));
 	}
 
