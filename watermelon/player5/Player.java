@@ -2,8 +2,6 @@ package watermelon.player5;
 
 import java.util.ArrayList;
 
-import watermelon.player5.Boards;
-import watermelon.player5.SeedGraph;
 import watermelon.sim.Pair;
 import watermelon.sim.seed;
 
@@ -39,60 +37,28 @@ public class Player extends watermelon.sim.Player {
 		seedgraph = new SeedGraph(initTreelist, initWidth, initLength, initS);
 		boards = new Boards(seedgraph);
 
-		ArrayList<seed> hexAlternatingNW  = boards.getHexagonalNWBoard();
-		ArrayList<seed> hexAlternatingNE  = boards.getHexagonalNEBoard();
-		ArrayList<seed> hexAlternatingSW  = boards.getHexagonalSWBoard();
-		ArrayList<seed> hexAlternatingSE  = boards.getHexagonalSEBoard();
-		ArrayList<seed> gridAlternatingNW = boards.getAlternatingNWBoard();
-		ArrayList<seed> gridAlternatingNE = boards.getAlternatingNEBoard();
-		ArrayList<seed> gridAlternatingSW = boards.getAlternatingSWBoard();
-		ArrayList<seed> gridAlternatingSE = boards.getAlternatingSEBoard();
+		ArrayList<ArrayList<seed>> seedBoards = new ArrayList<ArrayList<seed>>();
+		seedBoards.add(boards.getHexagonalNWBoard());
+		seedBoards.add(boards.getHexagonalNEBoard());
+		seedBoards.add(boards.getHexagonalSWBoard());
+		seedBoards.add(boards.getHexagonalSEBoard());
+		seedBoards.add(boards.getAlternatingNWBoard());
+		seedBoards.add(boards.getAlternatingNEBoard());
+		seedBoards.add(boards.getAlternatingSWBoard());
+		seedBoards.add(boards.getAlternatingSEBoard());
 
-		double scoreHexAlternatingNW  = seedgraph.calculateScore(hexAlternatingNW);
-		double scoreHexAlternatingNE  = seedgraph.calculateScore(hexAlternatingNE);
-		double scoreHexAlternatingSW  = seedgraph.calculateScore(hexAlternatingSW);
-		double scoreHexAlternatingSE  = seedgraph.calculateScore(hexAlternatingSE);
-		double scoreGridAlternatingNW = seedgraph.calculateScore(gridAlternatingNW);
-		double scoreGridAlternatingNE = seedgraph.calculateScore(gridAlternatingNE);
-		double scoreGridAlternatingSW = seedgraph.calculateScore(gridAlternatingSW);
-		double scoreGridAlternatingSE = seedgraph.calculateScore(gridAlternatingSE);
+		ArrayList<Double> scores = new ArrayList<Double>();
+		for (ArrayList<seed> b : seedBoards)
+			scores.add(seedgraph.calculateScore(b));
 
-		double maxScore = Double.MIN_VALUE;
+		seedlist = seedBoards.get(0);
+		double maxScore = scores.get(0);
 
-    // check alternating scores
-		if (scoreHexAlternatingNW > maxScore) {
-			seedlist = hexAlternatingNW;
-			maxScore = scoreHexAlternatingNW;
-		} 
-		if (scoreHexAlternatingNE > maxScore) {
-			seedlist = hexAlternatingNE;
-			maxScore = scoreHexAlternatingNE;
-		}
-		if (scoreHexAlternatingSW > maxScore) {
-			seedlist = hexAlternatingSW;
-			maxScore = scoreHexAlternatingSW;
-		}
-		if (scoreHexAlternatingSE > maxScore) {
-			seedlist = hexAlternatingSE;
-			maxScore = scoreHexAlternatingSE;
-		}
-
-    // check grid scores
-    if (scoreGridAlternatingNW > maxScore) {
-			seedlist = gridAlternatingNW;
-			maxScore = scoreGridAlternatingNW;
-		}
-		if (scoreGridAlternatingNE > maxScore) {
-			seedlist = gridAlternatingNE;
-			maxScore = scoreGridAlternatingNE;
-		}
-		if (scoreGridAlternatingSW > maxScore) {
-			seedlist = gridAlternatingSW;
-			maxScore = scoreGridAlternatingSW;
-		}
-		if (scoreGridAlternatingSE > maxScore) {
-			seedlist = gridAlternatingSE;
-			maxScore = scoreGridAlternatingSE;
+		for (int i = 0; i < scores.size(); i++) {
+			if (scores.get(i) > maxScore) {
+				maxScore = scores.get(i);
+				seedlist = seedBoards.get(i);
+			}
 		}
 
 		System.out.println("maxScore = " + maxScore);

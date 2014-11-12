@@ -26,21 +26,21 @@ public class Boards {
 		return distoseed * Math.cos(Math.PI / 6.0);
 	}
 
-  // recolor and jiggle the board, stopping when no improvement is seen
-  public void recolorJiggleSmart(ArrayList<seed> tmplist) {
-    double currentScore = seedgraph.calculateScore(tmplist);
-    while (true) {
-      seedgraph.jiggleAllSeedsTowardTree(tmplist);
-      seedgraph.scanAndInsert(tmplist);
+	// recolor and jiggle the board, stopping when no improvement is seen
+	public void recolorJiggleSmart(ArrayList<seed> tmplist) {
+		double currentScore = seedgraph.calculateScore(tmplist);
+		while (true) {
+			seedgraph.jiggleAllSeedsTowardTree(tmplist);
+			seedgraph.scanAndInsert(tmplist);
 			seedgraph.recolorBoard(tmplist);
 			seedgraph.jiggleAllSeeds(tmplist);
-      double improvedScore = seedgraph.calculateScore(tmplist);
-      if (improvedScore <= currentScore)
-        break;
-      else
-        currentScore = improvedScore;
-    }
-  }
+			double improvedScore = seedgraph.calculateScore(tmplist);
+			if (improvedScore <= currentScore)
+				break;
+			else
+				currentScore = improvedScore;
+		}
+	}
 
 	// North West
 	public ArrayList<seed> getHexagonalNWBoard() {
@@ -68,8 +68,9 @@ public class Boards {
 			seedType = 1;
 			shift = !shift;
 		}
-    recolorJiggleSmart(tmplist);
-    System.out.println("Finished Building NW HEX with score "+seedgraph.calculateScore(tmplist)+" and "+tmplist.size()+"seeds");
+		recolorJiggleSmart(tmplist);
+		System.out.println("Finished Building NW HEX with score " + seedgraph.calculateScore(tmplist) + " and "
+				+ tmplist.size() + "seeds");
 		return tmplist;
 	}
 
@@ -99,8 +100,9 @@ public class Boards {
 			seedType = 1;
 			shift = !shift;
 		}
-    recolorJiggleSmart(tmplist);
-    System.out.println("Finished Building NE HEX with score "+seedgraph.calculateScore(tmplist)+" and "+tmplist.size()+"seeds");
+		recolorJiggleSmart(tmplist);
+		System.out.println("Finished Building NE HEX with score " + seedgraph.calculateScore(tmplist) + " and "
+				+ tmplist.size() + "seeds");
 		return tmplist;
 	}
 
@@ -130,8 +132,9 @@ public class Boards {
 			seedType = 1;
 			shift = !shift;
 		}
-    recolorJiggleSmart(tmplist);
-    System.out.println("Finished Building SW HEX with score "+seedgraph.calculateScore(tmplist)+" and "+tmplist.size()+"seeds");
+		recolorJiggleSmart(tmplist);
+		System.out.println("Finished Building SW HEX with score " + seedgraph.calculateScore(tmplist) + " and "
+				+ tmplist.size() + "seeds");
 		return tmplist;
 	}
 
@@ -161,8 +164,9 @@ public class Boards {
 			seedType = 1;
 			shift = !shift;
 		}
-    recolorJiggleSmart(tmplist);
-    System.out.println("Finished Building SE HEX with score "+seedgraph.calculateScore(tmplist)+" and "+tmplist.size()+"seeds");
+		recolorJiggleSmart(tmplist);
+		System.out.println("Finished Building SE HEX with score " + seedgraph.calculateScore(tmplist) + " and "
+				+ tmplist.size() + "seeds");
 		return tmplist;
 	}
 
@@ -192,7 +196,8 @@ public class Boards {
 			}
 			seedType = 1;
 		}
-    System.out.println("Finished Building NW ALT with score "+seedgraph.calculateScore(tmplist)+" and "+tmplist.size()+"seeds");
+		System.out.println("Finished Building NW ALT with score " + seedgraph.calculateScore(tmplist) + " and "
+				+ tmplist.size() + "seeds");
 		return tmplist;
 	}
 
@@ -222,7 +227,8 @@ public class Boards {
 			}
 			seedType = 1;
 		}
-    System.out.println("Finished Building NE ALT with score "+seedgraph.calculateScore(tmplist)+" and "+tmplist.size()+"seeds");
+		System.out.println("Finished Building NE ALT with score " + seedgraph.calculateScore(tmplist) + " and "
+				+ tmplist.size() + "seeds");
 		return tmplist;
 	}
 
@@ -252,7 +258,8 @@ public class Boards {
 			}
 			seedType = 1;
 		}
-    System.out.println("Finished Building SW ALT with score "+seedgraph.calculateScore(tmplist)+" and "+tmplist.size()+"seeds");
+		System.out.println("Finished Building SW ALT with score " + seedgraph.calculateScore(tmplist) + " and "
+				+ tmplist.size() + "seeds");
 		return tmplist;
 	}
 
@@ -282,7 +289,8 @@ public class Boards {
 			}
 			seedType = 1;
 		}
-    System.out.println("Finished Building SE ALT with score "+seedgraph.calculateScore(tmplist)+" and "+tmplist.size()+"seeds");
+		System.out.println("Finished Building SE ALT with score " + seedgraph.calculateScore(tmplist) + " and "
+				+ tmplist.size() + "seeds");
 		return tmplist;
 	}
 
