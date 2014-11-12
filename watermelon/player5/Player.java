@@ -39,13 +39,13 @@ public class Player extends watermelon.sim.Player {
 
 		ArrayList<ArrayList<seed>> seedBoards = new ArrayList<ArrayList<seed>>();
 		seedBoards.add(boards.getHexagonalNWBoard());
-		seedBoards.add(boards.getHexagonalNEBoard());
-		seedBoards.add(boards.getHexagonalSWBoard());
-		seedBoards.add(boards.getHexagonalSEBoard());
-		seedBoards.add(boards.getAlternatingNWBoard());
-		seedBoards.add(boards.getAlternatingNEBoard());
-		seedBoards.add(boards.getAlternatingSWBoard());
-		seedBoards.add(boards.getAlternatingSEBoard());
+		// seedBoards.add(boards.getHexagonalNEBoard());
+		// seedBoards.add(boards.getHexagonalSWBoard());
+		// seedBoards.add(boards.getHexagonalSEBoard());
+		// seedBoards.add(boards.getAlternatingNWBoard());
+		// seedBoards.add(boards.getAlternatingNEBoard());
+		// seedBoards.add(boards.getAlternatingSWBoard());
+		// seedBoards.add(boards.getAlternatingSEBoard());
 
 		ArrayList<Double> scores = new ArrayList<Double>();
 		for (ArrayList<seed> b : seedBoards)

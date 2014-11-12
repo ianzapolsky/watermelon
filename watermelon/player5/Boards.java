@@ -29,22 +29,30 @@ public class Boards {
 	// recolor and jiggle the board, stopping when no improvement is seen
 	public void recolorJiggleSmart(ArrayList<seed> tmplist) {
 		double currentScore = seedgraph.calculateScore(tmplist);
+
+		// try to add a new seed
+		seedgraph.moveAllSeedsToSidesAndInsert(tmplist);
+		seedgraph.jiggleAllSeedsTowardTree(tmplist);
+		seedgraph.scanAndInsert(tmplist);
+
 		while (true) {
-			seedgraph.jiggleAllSeedsTowardTree(tmplist);
-			seedgraph.scanAndInsert(tmplist);
-			seedgraph.recolorBoard(tmplist);
+			// now try to increase the board score
+			seedgraph.shiftRowsAndCols(tmplist);
 			seedgraph.jiggleAllSeeds(tmplist);
+			seedgraph.recolorBoard(tmplist);
+
 			double improvedScore = seedgraph.calculateScore(tmplist);
 			if (improvedScore <= currentScore)
 				break;
-			else
+			else {
+				System.out.println("Old score: " + currentScore + ", New score: " + improvedScore);
 				currentScore = improvedScore;
+			}
 		}
 	}
 
 	// North West
 	public ArrayList<seed> getHexagonalNWBoard() {
-
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean shift = false;

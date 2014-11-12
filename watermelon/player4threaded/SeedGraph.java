@@ -92,12 +92,10 @@ public class SeedGraph {
 	public ArrayList<seed> shiftRows(ArrayList<seed> seedlist) {
 		ArrayList<seed> board = (ArrayList<seed>) seedlist.clone();
 		ArrayList<ArrayList<seed>> rows = getRows(board);
-
 		ArrayList<seed> maxBoard = seedlist;
 		double maxScore = calculateScore(seedlist);
 
 		// shift up
-
 		for (ArrayList<seed> row : rows) {
 			boolean scoreIncreasing = true;
 			while (scoreIncreasing) {
@@ -109,14 +107,12 @@ public class SeedGraph {
 					else
 						movedSeedsCount++;
 				}
-
 				// makes sure that seeds have actually been moved before we
 				// recolor and calculate the score
 				if (movedSeedsCount == 0) {
 					scoreIncreasing = false;
 					continue;
 				}
-
 				System.out.println("recoloring board");
 				recolorBoard(board);
 				System.out.println("done recoloring board");
