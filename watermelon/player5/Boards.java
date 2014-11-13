@@ -34,10 +34,14 @@ public class Boards {
 		seedgraph.moveAllSeedsToSidesAndInsert(tmplist);
 		seedgraph.jiggleAllSeedsTowardTree(tmplist);
 		seedgraph.scanAndInsert(tmplist);
+  
+    System.out.println("    Initial jiggle and insert completed");
+    System.out.println("    Begin improving score");
 
 		while (true) {
 			// now try to increase the board score
 			seedgraph.shiftRowsAndCols(tmplist);
+		  seedgraph.scanAndInsert(tmplist);
 			seedgraph.jiggleAllSeeds(tmplist);
 			seedgraph.recolorBoard(tmplist);
 
@@ -45,14 +49,15 @@ public class Boards {
 			if (improvedScore <= currentScore)
 				break;
 			else {
-				System.out.println("Old score: " + currentScore + ", New score: " + improvedScore);
 				currentScore = improvedScore;
 			}
 		}
+    System.out.println("    Done");
 	}
 
 	// North West
 	public ArrayList<seed> getHexagonalNWBoard() {
+    System.out.println("Started Building NW HEX");
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean shift = false;
@@ -78,13 +83,13 @@ public class Boards {
 		}
 		recolorJiggleSmart(tmplist);
 		System.out.println("Finished Building NW HEX with score " + seedgraph.calculateScore(tmplist) + " and "
-				+ tmplist.size() + "seeds");
+				+ tmplist.size() + " seeds");
 		return tmplist;
 	}
 
 	// North East
 	public ArrayList<seed> getHexagonalNEBoard() {
-
+    System.out.println("Started Building NE HEX");
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean shift = false;
@@ -110,13 +115,14 @@ public class Boards {
 		}
 		recolorJiggleSmart(tmplist);
 		System.out.println("Finished Building NE HEX with score " + seedgraph.calculateScore(tmplist) + " and "
-				+ tmplist.size() + "seeds");
+				+ tmplist.size() + " seeds");
 		return tmplist;
 	}
 
 	// South West
 	public ArrayList<seed> getHexagonalSWBoard() {
 
+    System.out.println("Started Building SW HEX");
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean shift = false;
@@ -142,13 +148,14 @@ public class Boards {
 		}
 		recolorJiggleSmart(tmplist);
 		System.out.println("Finished Building SW HEX with score " + seedgraph.calculateScore(tmplist) + " and "
-				+ tmplist.size() + "seeds");
+				+ tmplist.size() + " seeds");
 		return tmplist;
 	}
 
 	// South East
 	public ArrayList<seed> getHexagonalSEBoard() {
 
+    System.out.println("Started Building SE HEX");
 		ArrayList<seed> tmplist = new ArrayList<seed>();
 		int seedType = 1;
 		boolean shift = false;
@@ -174,7 +181,7 @@ public class Boards {
 		}
 		recolorJiggleSmart(tmplist);
 		System.out.println("Finished Building SE HEX with score " + seedgraph.calculateScore(tmplist) + " and "
-				+ tmplist.size() + "seeds");
+				+ tmplist.size() + " seeds");
 		return tmplist;
 	}
 
@@ -205,7 +212,7 @@ public class Boards {
 			seedType = 1;
 		}
 		System.out.println("Finished Building NW ALT with score " + seedgraph.calculateScore(tmplist) + " and "
-				+ tmplist.size() + "seeds");
+				+ tmplist.size() + " seeds");
 		return tmplist;
 	}
 
@@ -236,7 +243,7 @@ public class Boards {
 			seedType = 1;
 		}
 		System.out.println("Finished Building NE ALT with score " + seedgraph.calculateScore(tmplist) + " and "
-				+ tmplist.size() + "seeds");
+				+ tmplist.size() + " seeds");
 		return tmplist;
 	}
 
@@ -267,7 +274,7 @@ public class Boards {
 			seedType = 1;
 		}
 		System.out.println("Finished Building SW ALT with score " + seedgraph.calculateScore(tmplist) + " and "
-				+ tmplist.size() + "seeds");
+				+ tmplist.size() + " seeds");
 		return tmplist;
 	}
 
@@ -298,7 +305,7 @@ public class Boards {
 			seedType = 1;
 		}
 		System.out.println("Finished Building SE ALT with score " + seedgraph.calculateScore(tmplist) + " and "
-				+ tmplist.size() + "seeds");
+				+ tmplist.size() + " seeds");
 		return tmplist;
 	}
 

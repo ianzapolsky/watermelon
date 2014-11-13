@@ -282,7 +282,6 @@ public class SeedGraph {
 				seed s = new seed(i, j, true);
 				if (validateSeed(s, tmplist)) {
 					tmplist.add(s);
-					System.out.println("Added new seed to the board.");
 				}
 			}
 		}
@@ -342,9 +341,7 @@ public class SeedGraph {
 				// recolor and calculate the score
 				if (movedSeedsCount == 0)
 					break;
-				System.out.println("recoloring board");
 				recolorBoard(board);
-				System.out.println("done recoloring board");
 				double score = calculateScore(board);
 				if (score > maxScore) {
 					maxScore = score;
