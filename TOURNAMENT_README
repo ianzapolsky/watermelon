@@ -1,5 +1,5 @@
-board #     dimensions
-=======     ==========
+board #     dimensions    status
+=======     ==========    ======
 0           40.6 x 30.3
 1           40   x 40
 2           12   x 60
@@ -7,6 +7,6 @@ board #     dimensions
 4           40.6 x 30.3
 5           40.6 x 30.3
 6           20   x 35
-7           3    x 20
+7           3    x 20     DONE
 8           50   x 80
 9           50   x 80

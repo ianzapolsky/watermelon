@@ -38,7 +38,10 @@ public class Boards {
     System.out.println("    Initial jiggle and insert completed");
     System.out.println("    Begin improving score");
 
+    int iteration = 0;
+
 		while (true) {
+      System.out.println("        iteration " + iteration++ + " with score " + currentScore);
 			// now try to increase the board score
 			seedgraph.shiftRowsAndCols(tmplist);
 		  seedgraph.scanAndInsert(tmplist);
@@ -46,7 +49,7 @@ public class Boards {
 			seedgraph.recolorBoard(tmplist);
 
 			double improvedScore = seedgraph.calculateScore(tmplist);
-			if (improvedScore <= currentScore)
+			if (improvedScore <= currentScore + epsilon)
 				break;
 			else {
 				currentScore = improvedScore;
