@@ -30,6 +30,9 @@ public class Player extends watermelon.sim.Player {
 
 	@Override
 	public ArrayList<seed> move(ArrayList<Pair> initTreelist, double initWidth, double initLength, double initS) {
+
+    long startTime = System.currentTimeMillis();
+
 		treelist = initTreelist;
 		width = initWidth;
 		length = initLength;
@@ -64,6 +67,13 @@ public class Player extends watermelon.sim.Player {
 		System.out.println("maxScore = " + maxScore);
 		System.out.printf("seedlist size is %d\n", seedlist.size());
 		System.out.printf("score is %f\n", maxScore);
+
+    long endTime = System.currentTimeMillis();
+  
+    long duration = (endTime - startTime) / 1000;
+
+    System.out.println("This run took " + duration + " seconds.");
+
 		return seedlist;
 	}
 
