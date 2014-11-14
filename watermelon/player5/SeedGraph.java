@@ -76,7 +76,9 @@ public class SeedGraph {
 					bestScore = score;
 					bestX = s.x;
 					bestY = s.y;
-				}
+				} else {
+          break;
+        }
 			}
 		}
 		s.x = bestX;

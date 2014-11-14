@@ -56,7 +56,7 @@ public class Boards {
       System.out.println("            recolored board");
 
 			double improvedScore = seedgraph.calculateScore(tmplist);
-			if (improvedScore <= currentScore + epsilon)
+			if (improvedScore <= currentScore + epsilon + .1)
 				break;
 			else {
 				currentScore = improvedScore;
