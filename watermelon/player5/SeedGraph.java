@@ -85,7 +85,7 @@ public class SeedGraph {
 
 	public void jiggleAllSeeds(ArrayList<seed> seedlist) {
 		int i = 0;
-		int maxIterations = 50;
+		int maxIterations = 20;
 		double currentScore = calculateScore(seedlist);
 		while (i++ < maxIterations) {
 			for (int j = 0; j < seedlist.size(); j++) {
@@ -143,7 +143,7 @@ public class SeedGraph {
 
 	public void jiggleAllSeedsTowardTree(ArrayList<seed> seedlist) {
 		int i = 0;
-		int maxIterations = 100;
+		int maxIterations = 10;
 		while (i++ < maxIterations) {
 			for (int j = 0; j < seedlist.size(); j++) {
 			  jiggleSeedTowardTree(seedlist, j);
@@ -153,7 +153,7 @@ public class SeedGraph {
 
 	public void moveAllSeedsToSidesAndInsert(ArrayList<seed> seedlist) {
 		int i = 0;
-		int maxIterations = 2;
+		int maxIterations = 3;
 		while (i++ < maxIterations) {
 			moveAllSeedsN(seedlist);
 			scanAndInsert(seedlist);
@@ -162,6 +162,7 @@ public class SeedGraph {
 			moveAllSeedsS(seedlist);
 			scanAndInsert(seedlist);
 			moveAllSeedsW(seedlist);
+			scanAndInsert(seedlist);
 		}
 	}
 
