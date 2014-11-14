@@ -85,7 +85,7 @@ public class SeedGraph {
 
 	public void jiggleAllSeeds(ArrayList<seed> seedlist) {
 		int i = 0;
-		int maxIterations = 20;
+		int maxIterations = 5;
 		double currentScore = calculateScore(seedlist);
 		while (i++ < maxIterations) {
 			for (int j = 0; j < seedlist.size(); j++) {
