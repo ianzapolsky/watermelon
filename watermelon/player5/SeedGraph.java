@@ -52,7 +52,7 @@ public class SeedGraph {
 	private void jiggleSeed(ArrayList<seed> seedlist, int seedIndex) {
 		seed s = seedlist.get(seedIndex);
 		double angleGranularity = 1;
-		double locationGranularity = 0.01;
+		double locationGranularity = 0.1;
 		double origScore = calculateScore(seedlist);
 		double bestScore = origScore;
 		double origX = s.x;
@@ -85,12 +85,11 @@ public class SeedGraph {
 
 	public void jiggleAllSeeds(ArrayList<seed> seedlist) {
 		int i = 0;
-		int maxIterations = 100;
+		int maxIterations = 50;
 		double currentScore = calculateScore(seedlist);
 		while (i++ < maxIterations) {
 			for (int j = 0; j < seedlist.size(); j++) {
-				if (getAdjacentSeeds(seedlist, j).size() < 6)
-					jiggleSeed(seedlist, j);
+			  jiggleSeed(seedlist, j);
 			}
 			double diffScore = calculateScore(seedlist);
 			if (diffScore > currentScore)
@@ -114,7 +113,7 @@ public class SeedGraph {
 		double dist = distance(nearestTree, s);
 		double bestDist = dist;
 		double angleGranularity = 1;
-		double locationGranularity = 0.01;
+		double locationGranularity = 0.1;
 		double origX = s.x;
 		double origY = s.y;
 		double bestX = s.x;
@@ -147,15 +146,14 @@ public class SeedGraph {
 		int maxIterations = 100;
 		while (i++ < maxIterations) {
 			for (int j = 0; j < seedlist.size(); j++) {
-				if (getAdjacentSeeds(seedlist, j).size() < 6)
-					jiggleSeedTowardTree(seedlist, j);
+			  jiggleSeedTowardTree(seedlist, j);
 			}
 		}
 	}
 
 	public void moveAllSeedsToSidesAndInsert(ArrayList<seed> seedlist) {
 		int i = 0;
-		int maxIterations = 100;
+		int maxIterations = 2;
 		while (i++ < maxIterations) {
 			moveAllSeedsN(seedlist);
 			scanAndInsert(seedlist);

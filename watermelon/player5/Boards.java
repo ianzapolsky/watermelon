@@ -32,8 +32,11 @@ public class Boards {
 
 		// try to add a new seed
 		seedgraph.moveAllSeedsToSidesAndInsert(tmplist);
+    System.out.println("    moved all seeds to sides");
 		seedgraph.jiggleAllSeedsTowardTree(tmplist);
+    System.out.println("    moved all seeds to trees");
 		seedgraph.scanAndInsert(tmplist);
+    System.out.println("    scanned and inserted");
   
     System.out.println("    Initial jiggle and insert completed");
     System.out.println("    Begin improving score");
@@ -44,9 +47,13 @@ public class Boards {
       System.out.println("        iteration " + iteration++ + " with score " + currentScore);
 			// now try to increase the board score
 			seedgraph.shiftRowsAndCols(tmplist);
+      System.out.println("            shifted rows and cols");
 		  seedgraph.scanAndInsert(tmplist);
+      System.out.println("            scanned and inserted");
 			seedgraph.jiggleAllSeeds(tmplist);
+      System.out.println("            jiggled seeds");
 			seedgraph.recolorBoard(tmplist);
+      System.out.println("            recolored board");
 
 			double improvedScore = seedgraph.calculateScore(tmplist);
 			if (improvedScore <= currentScore + epsilon)
